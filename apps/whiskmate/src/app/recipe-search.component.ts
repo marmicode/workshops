@@ -38,11 +38,13 @@ import { Recipe } from './recipe';
       }
     </wm-catalog>
 
-    <wm-paginator
-      [itemsPerPage]="itemsPerPage()"
-      [(offset)]="offset"
-      [total]="total()"
-    />
+    @defer {
+      <wm-paginator
+        [itemsPerPage]="itemsPerPage()"
+        [(offset)]="offset"
+        [total]="total()"
+      />
+    }
   `,
   styles: `
     :host {
