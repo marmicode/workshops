@@ -12,6 +12,10 @@ import {
   RecipeRepositoryFake,
 } from './recipe-repository.fake';
 import { recipeMother } from '../testing/recipe.mother';
+import {
+  provideClientHydration,
+  withIncrementalHydration, withEventReplay,
+} from '@angular/platform-browser';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,8 +32,9 @@ export const appConfig: ApplicationConfig = {
         recipeMother.withBasicInfo('Dark Beer').build(),
       ]);
     }),
+    provideClientHydration(withIncrementalHydration()),
     provideRouter(appRoutes),
     provideRecipeRepositoryFake(),
-    provideExperimentalZonelessChangeDetection(),
+    provideExperimentalZonelessChangeDetection(), provideClientHydration(withEventReplay()),
   ],
 };

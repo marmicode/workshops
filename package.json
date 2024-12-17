@@ -2,7 +2,9 @@
   "name": "@whiskmate/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "serve:ssr:whiskmate": "node dist/apps/whiskmate/server/server.mjs"
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "19.0.4",
@@ -14,8 +16,11 @@
     "@angular/material": "19.0.3",
     "@angular/platform-browser": "19.0.4",
     "@angular/platform-browser-dynamic": "19.0.4",
+    "@angular/platform-server": "19.0.4",
     "@angular/router": "19.0.4",
+    "@angular/ssr": "^19.0.4",
     "@jscutlery/operators": "3.1.17",
+    "express": "^4.18.2",
     "rxjs": "7.8.1",
     "zone.js": "0.15.0"
   },
@@ -28,6 +33,7 @@
     "@angular/cli": "19.0.4",
     "@angular/compiler-cli": "19.0.4",
     "@angular/language-service": "19.0.4",
+    "@angular/ssr": "^19.0.5",
     "@eslint/js": "9.17.0",
     "@nx/angular": "20.2.2",
     "@nx/eslint": "20.2.2",
@@ -43,7 +49,8 @@
     "@testing-library/angular": "17.3.5",
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/user-event": "14.5.2",
-    "@types/node": "18.16.9",
+    "@types/express": "^4.17.17",
+    "@types/node": "^18.18.0",
     "@typescript-eslint/utils": "8.18.1",
     "@vitest/coverage-v8": "2.1.8",
     "@vitest/ui": "2.1.8",

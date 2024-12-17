@@ -6,7 +6,9 @@ import { Title } from '../shared/title.component';
   selector: 'wm-app',
   imports: [RouterOutlet, Title],
   template: `
-    <wm-title>👨🏻‍🍳 Whiskmate</wm-title>
+    @defer (hydrate never) {
+      <wm-title>👨🏻‍🍳 Whiskmate</wm-title>
+    }
     <router-outlet />
   `,
 })

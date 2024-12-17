@@ -38,7 +38,7 @@ import { Recipe } from './recipe';
       }
     </wm-catalog>
 
-    @defer {
+    @defer (hydrate on interaction) {
       <wm-paginator
         [itemsPerPage]="itemsPerPage()"
         [(offset)]="offset"
