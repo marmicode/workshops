@@ -1,21 +1,24 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { createRecipe } from './recipe';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-recipe-search',
   template: `
     <ul>
-      @for(recipe of recipes; track recipe.id) {
+      @for(recipe of recipes(); track recipe.id) {
       <li>
         <span>{{ recipe.name }}</span>
-        <button (click)="removeRecipe(recipe.id)">REMOVE</button>
+        <button (click)="removeRecipe(recipe.id)" (mouseenter)="(42)">
+          REMOVE
+        </button>
       </li>
       }
     </ul>
   `,
 })
 export class RecipeSearch {
-  protected recipes = [
+  protected recipes = signal([
     createRecipe({
       id: 'rec_burger',
       name: 'Burger',
@@ -37,9 +40,9 @@ export class RecipeSearch {
         'wash the cucumber',
       ],
     }),
-  ];
+  ]);
 
   removeRecipe(recipeId: string) {
-    this.recipes = this.recipes.filter((r) => r.id !== recipeId);
+    this.recipes.update((recipes) => recipes.filter((r) => r.id !== recipeId));
   }
 }
