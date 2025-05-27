@@ -1,20 +1,16 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { createRecipe } from './recipe';
+import { RecipePreview } from './recipe-preview.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-recipe-search',
+  imports: [RecipePreview],
   template: `
-    <ul>
-      @for(recipe of recipes(); track recipe.id) {
-      <li>
-        <span>{{ recipe.name }}</span>
-        <button (click)="removeRecipe(recipe.id)" (mouseenter)="(42)">
-          REMOVE
-        </button>
-      </li>
-      }
-    </ul>
+    @for(recipe of recipes(); track recipe.id) {
+    <app-recipe-preview [recipe]="recipe" />
+    <button (click)="removeRecipe(recipe.id)">REMOVE</button>
+    }
   `,
 })
 export class RecipeSearch {
