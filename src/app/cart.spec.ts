@@ -5,14 +5,14 @@ import { createRecipe } from './recipe';
 describe('cart', () => {
   it('is empty by default', () => {
     const { cart } = setUp();
-    expect(cart.getRecipes()).toEqual([]);
+    expect(cart.recipes()).toEqual([]);
   });
 
   it('can add recipes', () => {
     const { cart, burger, salad } = setUp();
     cart.addRecipe(burger);
     cart.addRecipe(salad);
-    expect(cart.getRecipes()).toEqual([
+    expect(cart.recipes()).toEqual([
       expect.objectContaining({ name: 'Burger' }),
       expect.objectContaining({ name: 'Salad' }),
     ]);

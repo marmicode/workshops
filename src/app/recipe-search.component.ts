@@ -1,15 +1,23 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { createRecipe } from './recipe';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  signal,
+} from '@angular/core';
+import { createRecipe, Recipe } from './recipe';
 import { RecipePreview } from './recipe-preview.component';
+import { Cart } from './cart';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-recipe-search',
   imports: [RecipePreview],
   template: `
+    <p>Cart: {{ cartCount() }}</p>
+    <hr />
     @for(recipe of recipes(); track recipe.id) {
     <app-recipe-preview [recipe]="recipe">
-      <button (click)="removeRecipe(recipe.id)">REMOVE</button>
+      <button (click)="addRecipeToCart(recipe)">ADD</button>
     </app-recipe-preview>
     }
   `,
@@ -38,8 +46,10 @@ export class RecipeSearch {
       ],
     }),
   ]);
+  protected cartCount = computed(() => this._cart.count());
+  private _cart = new Cart();
 
-  removeRecipe(recipeId: string) {
-    this.recipes.update((recipes) => recipes.filter((r) => r.id !== recipeId));
+  addRecipeToCart(recipe: Recipe) {
+    this._cart.addRecipe(recipe);
   }
 }
