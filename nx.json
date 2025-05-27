@@ -52,6 +52,12 @@
       "linter": "eslint",
       "style": "css",
       "unitTestRunner": "vitest"
+    },
+    "@nx/angular:component": {
+      "style": "css",
+      "skipTests": true,
+      "inlineStyle": true,
+      "inlineTemplate": true
     }
   },
   "defaultProject": "whiskmate"
