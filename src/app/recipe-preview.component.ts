@@ -11,7 +11,7 @@ import { Recipe } from './recipe';
   selector: 'app-recipe-preview',
   template: `
     <h2>{{ recipe().name }}</h2>
-    <button (click)="remove.emit()">REMOVE</button>
+    <ng-content />
   `,
   styles: `
   :host {
@@ -25,5 +25,4 @@ import { Recipe } from './recipe';
 })
 export class RecipePreview {
   recipe = input.required<Recipe>();
-  remove = output<void>();
 }

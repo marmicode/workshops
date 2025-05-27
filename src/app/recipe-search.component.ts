@@ -8,7 +8,9 @@ import { RecipePreview } from './recipe-preview.component';
   imports: [RecipePreview],
   template: `
     @for(recipe of recipes(); track recipe.id) {
-    <app-recipe-preview [recipe]="recipe" (remove)="removeRecipe(recipe.id)" />
+    <app-recipe-preview [recipe]="recipe">
+      <button (click)="removeRecipe(recipe.id)">REMOVE</button>
+    </app-recipe-preview>
     }
   `,
 })
