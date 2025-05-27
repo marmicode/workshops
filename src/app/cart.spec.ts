@@ -3,12 +3,12 @@ import { Cart } from './cart';
 import { createRecipe } from './recipe';
 
 describe('cart', () => {
-  it.todo('is empty by default', () => {
+  it('is empty by default', () => {
     const { cart } = setUp();
     expect(cart.getRecipes()).toEqual([]);
   });
 
-  it.todo('can add recipes', () => {
+  it('can add recipes', () => {
     const { cart, burger, salad } = setUp();
     cart.addRecipe(burger);
     cart.addRecipe(salad);
@@ -18,7 +18,7 @@ describe('cart', () => {
     ]);
   });
 
-  it.todo('throws if recipe is already added', () => {
+  it('throws if recipe is already added', () => {
     const { cart, burger, burgerDuplicate } = setUp();
     cart.addRecipe(burger);
     expect(() => cart.addRecipe(burgerDuplicate)).toThrow(
@@ -26,12 +26,12 @@ describe('cart', () => {
     );
   });
 
-  it.todo('`canAddRecipe` returns true if recipe is not in cart', () => {
+  it('`canAddRecipe` returns true if recipe is not in cart', () => {
     const { cart, burger } = setUp();
     expect(cart.canAddRecipe(burger)).toBe(true);
   });
 
-  it.todo('`canAddRecipe` returns false if recipe is already in cart', () => {
+  it('`canAddRecipe` returns false if recipe is already in cart', () => {
     const { cart, burger, burgerDuplicate } = setUp();
     cart.addRecipe(burger);
     expect(cart.canAddRecipe(burgerDuplicate)).toBe(false);

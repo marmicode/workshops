@@ -1,15 +1,21 @@
 import { Recipe } from './recipe';
 
 export class Cart {
+  private _recipes: Recipe[] = [];
+
   addRecipe(recipe: Recipe) {
-    throw new Error('Method not implemented.');
+    if (!this.canAddRecipe(recipe)) {
+      throw new Error('Recipe already in cart');
+    }
+
+    this._recipes.push(recipe);
   }
 
   canAddRecipe(recipe: Recipe) {
-    throw new Error('Method not implemented.');
+    return this._recipes.every((r) => r.id !== recipe.id);
   }
 
-  getRecipes() {
-    throw new Error('Method not implemented.');
+  getRecipes(): Recipe[] {
+    return this._recipes;
   }
 }
