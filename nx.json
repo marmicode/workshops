@@ -54,6 +54,7 @@
       "unitTestRunner": "vitest"
     },
     "@nx/angular:component": {
+      "changeDetection": "OnPush",
       "style": "css",
       "skipTests": true,
       "inlineStyle": true,
