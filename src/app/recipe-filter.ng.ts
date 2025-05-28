@@ -1,5 +1,6 @@
 import { Component, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { RecipeCriteria } from './recipe-criteria';
 
 @Component({
   selector: 'app-recipe-filter',
@@ -32,10 +33,4 @@ export class RecipeFilter {
       maxSteps: this.form.value.maxSteps ?? null,
     });
   }
-}
-
-export interface RecipeCriteria {
-  keywords: string | null;
-  maxIngredients: number | null;
-  maxSteps: number | null;
 }

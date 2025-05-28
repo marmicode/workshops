@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { createRecipe, Recipe } from './recipe';
+import { RecipeCriteria } from './recipe-criteria';
 
 @Injectable({
   providedIn: 'root',
@@ -9,9 +10,16 @@ import { createRecipe, Recipe } from './recipe';
 export class RecipeRepository {
   private _http = inject(HttpClient);
 
-  searchRecipes(): Observable<Recipe[]> {
+  searchRecipes(criteria?: RecipeCriteria): Observable<Recipe[]> {
+    let params = new HttpParams();
+    if (criteria?.keywords) {
+      params = params.set('q', criteria.keywords);
+    }
+
     return this._http
-      .get<RecipesResponse>('https://recipe-api.marmicode.io/recipes')
+      .get<RecipesResponse>('https://recipe-api.marmicode.io/recipes', {
+        params,
+      })
       .pipe(
         map((response) => {
           return response.items.map((recipe) => {
