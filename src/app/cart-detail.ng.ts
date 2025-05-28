@@ -17,3 +17,5 @@ import { RecipePreview } from './recipe-preview.ng';
 export class CartDetail {
   protected cart = inject(Cart);
 }
+
+export default CartDetail;

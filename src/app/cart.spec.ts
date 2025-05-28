@@ -22,7 +22,7 @@ describe('cart', () => {
     const { cart, burger, burgerDuplicate } = setUp();
     cart.addRecipe(burger);
     expect(() => cart.addRecipe(burgerDuplicate)).toThrow(
-      'Recipe already in cart'
+      'Recipe already in cart',
     );
   });
 

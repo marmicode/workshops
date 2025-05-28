@@ -68,3 +68,5 @@ export class RecipeSearch {
     this._criteria.set(criteria);
   }
 }
+
+export default RecipeSearch;
