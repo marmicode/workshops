@@ -20,4 +20,10 @@ export class Cart {
   canAddRecipe(recipe: Recipe) {
     return this._recipes().every((r) => r.id !== recipe.id);
   }
+
+  removeRecipe(recipe: Recipe) {
+    this._recipes.update((recipes) =>
+      recipes.filter((r) => r.id !== recipe.id),
+    );
+  }
 }
