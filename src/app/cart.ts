@@ -1,6 +1,7 @@
-import { computed, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { Recipe } from './recipe';
 
+@Injectable({ providedIn: 'root' })
 export class Cart {
   private _recipes = signal<Recipe[]>([]);
 

@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   signal,
 } from '@angular/core';
 import { Cart } from './cart';
@@ -55,8 +56,7 @@ export class RecipeSearch {
       canAdd: this._cart.canAddRecipe(recipe),
     }));
   });
-
-  private _cart = new Cart();
+  private _cart = inject(Cart);
 
   addRecipeToCart(recipe: Recipe) {
     this._cart.addRecipe(recipe);
