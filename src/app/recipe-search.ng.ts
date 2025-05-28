@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  Signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Cart } from './cart';
 import { Recipe } from './recipe';
@@ -18,15 +12,15 @@ import { RecipeRepository } from './recipe-repository';
   template: `
     <p>Cart: {{ cartCount() }}</p>
     <hr />
-    @for (recipe of recipes(); track recipe.id) {
+    @for (recipe of recipesWithCanAdd(); track recipe.id) {
       {{ recipe.name }}
       <app-recipe-preview [recipe]="recipe">
-        <button [disabled]="!canAdd(recipe)" (click)="addRecipeToCart(recipe)">
+        <button [disabled]="!recipe.canAdd" (click)="addRecipeToCart(recipe)">
           ADD
         </button>
       </app-recipe-preview>
     }
-  `,
+  `
 })
 export class RecipeSearch {
   protected cartCount = computed(() => this._cart.count());
@@ -34,7 +28,7 @@ export class RecipeSearch {
   protected recipesWithCanAdd = computed(() => {
     return this.recipes()?.map((recipe) => ({
       ...recipe,
-      canAdd: this._cart.canAddRecipe(recipe),
+      canAdd: this._cart.canAddRecipe(recipe)
     }));
   });
 
@@ -47,9 +41,5 @@ export class RecipeSearch {
 
   addRecipeToCart(recipe: Recipe) {
     this._cart.addRecipe(recipe);
-  }
-
-  canAdd(recipe: Recipe) {
-    return this._cart.canAddRecipe(recipe);
   }
 }
