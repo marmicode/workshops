@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RecipeSearch } from './recipe-search.component';
+import { RecipeSearch } from './recipe-search.ng';
 
 @Component({
   selector: 'app-root',

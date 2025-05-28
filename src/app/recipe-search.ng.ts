@@ -2,12 +2,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  Signal,
   signal,
 } from '@angular/core';
-import { createRecipe, Recipe } from './recipe';
-import { RecipePreview } from './recipe-preview.component';
 import { Cart } from './cart';
+import { createRecipe, Recipe } from './recipe';
+import { RecipePreview } from './recipe-preview.ng';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
