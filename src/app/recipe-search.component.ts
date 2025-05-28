@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  Signal,
   signal,
 } from '@angular/core';
 import { createRecipe, Recipe } from './recipe';
@@ -15,10 +16,12 @@ import { Cart } from './cart';
   template: `
     <p>Cart: {{ cartCount() }}</p>
     <hr />
-    @for(recipe of recipes(); track recipe.id) {
-    <app-recipe-preview [recipe]="recipe">
-      <button (click)="addRecipeToCart(recipe)">ADD</button>
-    </app-recipe-preview>
+    @for (recipe of recipes(); track recipe.id) {
+      <app-recipe-preview [recipe]="recipe">
+        <button [disabled]="!canAdd(recipe)" (click)="addRecipeToCart(recipe)">
+          ADD
+        </button>
+      </app-recipe-preview>
     }
   `,
 })
@@ -47,9 +50,20 @@ export class RecipeSearch {
     }),
   ]);
   protected cartCount = computed(() => this._cart.count());
+  protected recipesWithCanAdd = computed(() => {
+    return this.recipes().map((recipe) => ({
+      ...recipe,
+      canAdd: this._cart.canAddRecipe(recipe),
+    }));
+  });
+
   private _cart = new Cart();
 
   addRecipeToCart(recipe: Recipe) {
     this._cart.addRecipe(recipe);
+  }
+
+  canAdd(recipe: Recipe) {
+    return this._cart.canAddRecipe(recipe);
   }
 }
