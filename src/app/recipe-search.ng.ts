@@ -3,11 +3,13 @@ import {
   Component,
   computed,
   inject,
-  signal,
+  Signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Cart } from './cart';
-import { createRecipe, Recipe } from './recipe';
+import { Recipe } from './recipe';
 import { RecipePreview } from './recipe-preview.ng';
+import { RecipeRepository } from './recipe-repository';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,6 +19,7 @@ import { RecipePreview } from './recipe-preview.ng';
     <p>Cart: {{ cartCount() }}</p>
     <hr />
     @for (recipe of recipes(); track recipe.id) {
+      {{ recipe.name }}
       <app-recipe-preview [recipe]="recipe">
         <button [disabled]="!canAdd(recipe)" (click)="addRecipeToCart(recipe)">
           ADD
@@ -26,37 +29,21 @@ import { RecipePreview } from './recipe-preview.ng';
   `,
 })
 export class RecipeSearch {
-  protected recipes = signal([
-    createRecipe({
-      id: 'rec_burger',
-      name: 'Burger',
-      ingredients: ['bun', 'beef', 'lettuce', 'tomato'],
-      instructions: [
-        'cook the beef',
-        'put the beef on the bun',
-        'put the lettuce on the bun',
-        'put the tomato on the bun',
-      ],
-    }),
-    createRecipe({
-      id: 'rec_salad',
-      name: 'Salad',
-      ingredients: ['lettuce', 'tomato', 'cucumber'],
-      instructions: [
-        'wash the lettuce',
-        'wash the tomato',
-        'wash the cucumber',
-      ],
-    }),
-  ]);
   protected cartCount = computed(() => this._cart.count());
+  protected recipes: Signal<Recipe[] | undefined>;
   protected recipesWithCanAdd = computed(() => {
-    return this.recipes().map((recipe) => ({
+    return this.recipes()?.map((recipe) => ({
       ...recipe,
       canAdd: this._cart.canAddRecipe(recipe),
     }));
   });
+
   private _cart = inject(Cart);
+  private _recipeRepository = inject(RecipeRepository);
+
+  constructor() {
+    this.recipes = toSignal(this._recipeRepository.searchRecipes());
+  }
 
   addRecipeToCart(recipe: Recipe) {
     this._cart.addRecipe(recipe);
