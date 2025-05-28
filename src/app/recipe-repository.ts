@@ -10,7 +10,7 @@ import { RecipeCriteria } from './recipe-criteria';
 export class RecipeRepository {
   private _http = inject(HttpClient);
 
-  searchRecipes(criteria?: RecipeCriteria): Observable<Recipe[]> {
+  searchRecipes(criteria?: RecipeCriteria | null): Observable<Recipe[]> {
     let params = new HttpParams();
     if (criteria?.keywords) {
       params = params.set('q', criteria.keywords);

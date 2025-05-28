@@ -4,10 +4,8 @@ import {
   computed,
   inject,
   signal,
-  Signal,
 } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { switchMap } from 'rxjs';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { Cart } from './cart';
 import { Recipe } from './recipe';
 import { RecipeCriteria } from './recipe-criteria';
@@ -23,6 +21,9 @@ import { RecipeRepository } from './recipe-repository';
     <p>Cart: {{ cartCount() }}</p>
     <hr />
     <app-recipe-filter (criteriaChange)="search($event)" />
+    @if (recipes.isLoading()) {
+      <p>Loading...</p>
+    }
     @for (recipe of recipesWithCanAdd(); track recipe.id) {
       {{ recipe.name }}
       <app-recipe-preview [recipe]="recipe">
@@ -35,9 +36,12 @@ import { RecipeRepository } from './recipe-repository';
 })
 export class RecipeSearch {
   protected cartCount = computed(() => this._cart.count());
-  protected recipes: Signal<Recipe[] | undefined>;
+  protected recipes = rxResource({
+    request: () => this._criteria() ?? null,
+    loader: ({ request }) => this._recipeRepository.searchRecipes(request),
+  });
   protected recipesWithCanAdd = computed(() => {
-    return this.recipes()?.map((recipe) => ({
+    return this.recipes.value()?.map((recipe) => ({
       ...recipe,
       canAdd: this._cart.canAddRecipe(recipe),
     }));
@@ -48,11 +52,12 @@ export class RecipeSearch {
   private _criteria = signal<RecipeCriteria | undefined>(undefined);
 
   constructor() {
-    const criteria$ = toObservable(this._criteria);
-    const recipes$ = criteria$.pipe(
-      switchMap((criteria) => this._recipeRepository.searchRecipes(criteria)),
-    );
-    this.recipes = toSignal(recipes$);
+    // Before `resource` was introduced, we would use `toSignal` to convert an observable to a signal.
+    // const criteria$ = toObservable(this._criteria);
+    // const recipes$ = criteria$.pipe(
+    //   switchMap((criteria) => this._recipeRepository.searchRecipes(criteria)),
+    // );
+    // this.recipes = toSignal(recipes$);
   }
 
   addRecipeToCart(recipe: Recipe) {
