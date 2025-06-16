@@ -1,12 +1,30 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { createRecipe, Recipe } from './recipe';
 
 @Component({
   selector: 'app-recipe-search',
-  template: `🚧 &lt;app-recipe-search&gt; 🚧`,
+  template: `
+  <ul>
+    @for(recipe of recipes(); track recipe.id) {
+      <li>
+        <span>{{recipe.name}}</span>
+        <button (click)="addToCart(recipe)">ADD</button>
+      </li>
+    }
+  </ul>
+  <hr>
+  <h2>Cart</h2>
+  <ul>
+    @for(recipe of cart(); track recipe.id) {
+      <li>
+        <span>{{recipe.name}}</span>
+      </li>
+    }
+  </ul>
+  `,
 })
 export class RecipeSearch {
-  protected recipes: Recipe[] = [
+  protected recipes = signal<Recipe[]>([
     createRecipe({
       id: 'rec_burger',
       name: 'Burger',
@@ -38,6 +56,11 @@ export class RecipeSearch {
         '3. Add the cheese',
       ],
     }),
-  ];
+  ]);
+  protected cart = signal<Recipe[]>([]);
+
+  protected addToCart(recipe: Recipe) {
+    this.cart.update((recipes) => [...recipes, recipe]);
+  }
 }
 
