@@ -1,26 +1,28 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { createRecipe, Recipe } from './recipe';
 
 @Component({
   selector: 'app-recipe-search',
   template: `
-  <ul>
-    @for(recipe of recipes(); track recipe.id) {
+    <ul>
+      @for(recipe of recipesWithCartInfo(); track recipe.id) {
       <li>
-        <span>{{recipe.name}}</span>
-        <button (click)="addToCart(recipe)">ADD</button>
+        <span>{{ recipe.name }}</span>
+        <button [disabled]="recipe.isAdded" (click)="addToCart(recipe)">
+          ADD
+        </button>
       </li>
-    }
-  </ul>
-  <hr>
-  <h2>Cart</h2>
-  <ul>
-    @for(recipe of cart(); track recipe.id) {
+      }
+    </ul>
+    <hr />
+    <h2>Cart</h2>
+    <ul>
+      @for(recipe of cart(); track recipe.id) {
       <li>
-        <span>{{recipe.name}}</span>
+        <span>{{ recipe.name }}</span>
       </li>
-    }
-  </ul>
+      }
+    </ul>
   `,
 })
 export class RecipeSearch {
@@ -58,9 +60,16 @@ export class RecipeSearch {
     }),
   ]);
   protected cart = signal<Recipe[]>([]);
+  protected recipesWithCartInfo = computed(() => {
+    return this.recipes().map((recipe) => {
+      return {
+        ...recipe,
+        isAdded: this.cart().some((r) => r.id === recipe.id),
+      };
+    });
+  });
 
   protected addToCart(recipe: Recipe) {
     this.cart.update((recipes) => [...recipes, recipe]);
   }
 }
-
