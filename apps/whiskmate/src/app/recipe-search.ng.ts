@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { createRecipe, Recipe } from './recipe';
 
 @Component({
   selector: 'app-recipe-search',
@@ -6,7 +7,7 @@ import { Component } from '@angular/core';
 })
 export class RecipeSearch {
   protected recipes: Recipe[] = [
-    {
+    createRecipe({
       id: 'rec_burger',
       name: 'Burger',
       ingredients: ['bun', 'beef', 'lettuce', 'tomato', 'onion', 'pickle'],
@@ -15,8 +16,8 @@ export class RecipeSearch {
         '2. Put the beef in the bun',
         '3. Add the lettuce, tomato, onion, and pickle',
       ],
-    },
-    {
+    }),
+    createRecipe({
       id: 'rec_pizza',
       name: 'Pizza',
       ingredients: ['dough', 'tomato sauce', 'cheese', 'pepperoni'],
@@ -26,8 +27,8 @@ export class RecipeSearch {
         '3. Add the cheese',
         '4. Add the pepperoni',
       ],
-    },
-    {
+    }),
+    createRecipe({
       id: 'rec_pasta',
       name: 'Pasta',
       ingredients: ['pasta', 'tomato sauce', 'cheese'],
@@ -36,13 +37,7 @@ export class RecipeSearch {
         '2. Add the tomato sauce',
         '3. Add the cheese',
       ],
-    },
+    }),
   ];
 }
 
-interface Recipe {
-  id: string;
-  name: string;
-  ingredients: string[];
-  instructions: string[];
-}
