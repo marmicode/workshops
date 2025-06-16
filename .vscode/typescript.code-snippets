@@ -1,0 +1,45 @@
+{
+	"Deprecate work in progress": {
+		"prefix": "depwip",
+		"body": [
+			"/**",
+			"* @deprecated 🚧 Work in progress.",
+			"*/"
+		]
+	},
+	"Throw work in progress": {
+		"prefix": "throwwip",
+		"body": [
+			"throw new Error('🚧 Work in progress!');"
+		]
+	},
+	"Tap console.log": {
+		"prefix": "tcl",
+		"body": "tap(console.log)"
+	},
+	"Angular Service": {
+		"prefix": "ngs",
+		"body": [
+			"import { Injectable } from '@angular/core';",
+			"",
+			"@Injectable({",
+			"  providedIn: 'root',",
+			"})",
+			"export class $1 {}"
+		]
+	},
+	"Angular Component": {
+		"prefix": "ngc",
+		"body": [
+			"import { ChangeDetectionStrategy, Component } from '@angular/core';",
+			"",
+			"@Component({",
+			"  changeDetection: ChangeDetectionStrategy.OnPush,",
+			"  selector: '$2',",
+			"  imports: [],",
+			"  template: `🚧 <$1> 🚧`",
+			"})",
+			"export class $1 {}"
+		]
+	}
+} 
