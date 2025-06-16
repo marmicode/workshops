@@ -1,0 +1,9 @@
+{
+  "name": "whiskmate-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/whiskmate-e2e/src",
+  "implicitDependencies": ["whiskmate"],
+  "// targets": "to see all targets run: nx show project whiskmate-e2e --web",
+  "targets": {}
+}
