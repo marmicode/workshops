@@ -1,12 +1,11 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {Component, effect, viewChild} from '@angular/core';
+import {Rating} from './rating.ng';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [Rating],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
-  protected title = 'ng-demo';
 }
