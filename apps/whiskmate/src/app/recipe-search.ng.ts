@@ -1,28 +1,21 @@
 import { Component, computed, signal } from '@angular/core';
 import { createRecipe, Recipe } from './recipe';
+import { RecipePreview } from './recipe-preview.ng';
 
 @Component({
   selector: 'app-recipe-search',
+  imports: [RecipePreview],
   template: `
-    <ul>
-      @for(recipe of recipesWithCartInfo(); track recipe.id) {
-      <li>
-        <span>{{ recipe.name }}</span>
-        <button [disabled]="recipe.isAdded" (click)="addToCart(recipe)">
-          ADD
-        </button>
-      </li>
-      }
-    </ul>
+    @for(recipe of recipesWithCartInfo(); track recipe.id) {
+    <app-recipe-preview [recipe]="recipe">
+      <button (click)="addToCart(recipe)">ADD</button>
+    </app-recipe-preview>
+    }
     <hr />
     <h2>Cart</h2>
-    <ul>
-      @for(recipe of cart(); track recipe.id) {
-      <li>
-        <span>{{ recipe.name }}</span>
-      </li>
-      }
-    </ul>
+    @for(recipe of cart(); track recipe.id) {
+    <app-recipe-preview [recipe]="recipe" />
+    }
   `,
 })
 export class RecipeSearch {
