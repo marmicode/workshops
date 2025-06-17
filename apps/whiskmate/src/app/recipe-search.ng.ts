@@ -8,7 +8,9 @@ import { RecipePreview } from './recipe-preview.ng';
   template: `
     @for(recipe of recipesWithCartInfo(); track recipe.id) {
     <app-recipe-preview [recipe]="recipe">
-      <button (click)="addToCart(recipe)">ADD</button>
+      <button [disabled]="recipe.isAdded" (click)="addToCart(recipe)">
+        ADD
+      </button>
     </app-recipe-preview>
     }
     <hr />
