@@ -1,11 +1,14 @@
-import {Component, effect, viewChild} from '@angular/core';
-import {Rating} from './rating.ng';
+import { Component, effect, viewChild } from '@angular/core';
+import { Rating } from './rating.ng';
+import { Dynamic } from './dynamic';
 
 @Component({
   selector: 'app-root',
-  imports: [Rating],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  imports: [Rating, Dynamic],
+  template: `
+    <app-rating />
+    <hr />
+    <app-dynamic />
+  `,
 })
-export class App {
-}
+export class App {}
