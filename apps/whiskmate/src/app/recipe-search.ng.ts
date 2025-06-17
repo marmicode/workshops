@@ -1,10 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 import { Cart } from './cart';
 import { createRecipe, Recipe } from './recipe';
 import { RecipePreview } from './recipe-preview.ng';
@@ -24,33 +21,29 @@ import { RecipePreview } from './recipe-preview.ng';
   `,
 })
 export class RecipeSearch {
-  protected recipes = signal<Recipe[]>([]);
-  protected recipesWithCartInfo = () => {
-    return this.recipes().map((recipe) => ({
-      recipe,
-      canAdd: this._cart.canAddRecipe(recipe),
-    }));
-  };
-  private _cart = inject(Cart);
-  private _http = inject(HttpClient);
-
-  constructor() {
-    /* DO NOT DO THIS IN REAL LIFE. */
-    this._http
+  protected recipes = toSignal<Recipe[]>(
+    inject(HttpClient)
       .get<RecipeListDto>('https://recipes-api.marmicode.io/recipes')
-      .subscribe((data) => {
-        this.recipes.set(
-          data.items.map((item) =>
+      .pipe(
+        map((data) => {
+          return data.items.map((item) =>
             createRecipe({
               id: item.id,
               ingredients: [],
               instructions: [],
               name: item.name,
             })
-          )
-        );
-      });
-  }
+          );
+        })
+      )
+  );
+  protected recipesWithCartInfo = () => {
+    return this.recipes()?.map((recipe) => ({
+      recipe,
+      canAdd: this._cart.canAddRecipe(recipe),
+    }));
+  };
+  private _cart = inject(Cart);
 
   protected addToCart(recipe: Recipe) {
     this._cart.addRecipe(recipe);
