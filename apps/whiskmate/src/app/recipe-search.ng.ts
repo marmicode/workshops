@@ -1,22 +1,24 @@
-import { Component, computed, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
+import { Cart } from './cart';
 import { createRecipe, Recipe } from './recipe';
 import { RecipePreview } from './recipe-preview.ng';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-recipe-search',
   imports: [RecipePreview],
   template: `
-    @for(recipe of recipesWithCartInfo(); track recipe.id) {
-    <app-recipe-preview [recipe]="recipe">
-      <button [disabled]="recipe.isAdded" (click)="addToCart(recipe)">
+    @for(item of recipesWithCartInfo(); track item.recipe.id) {
+    <app-recipe-preview [recipe]="item.recipe">
+      <button [disabled]="!item.canAdd" (click)="addToCart(item.recipe)">
         ADD
       </button>
     </app-recipe-preview>
-    }
-    <hr />
-    <h2>Cart</h2>
-    @for(recipe of cart(); track recipe.id) {
-    <app-recipe-preview [recipe]="recipe" />
     }
   `,
 })
@@ -54,17 +56,15 @@ export class RecipeSearch {
       ],
     }),
   ]);
-  protected cart = signal<Recipe[]>([]);
-  protected recipesWithCartInfo = computed(() => {
-    return this.recipes().map((recipe) => {
-      return {
-        ...recipe,
-        isAdded: this.cart().some((r) => r.id === recipe.id),
-      };
-    });
-  });
+  protected recipesWithCartInfo = () => {
+    return this.recipes().map((recipe) => ({
+      recipe,
+      canAdd: this._cart.canAddRecipe(recipe),
+    }));
+  };
+  private _cart = inject(Cart);
 
   protected addToCart(recipe: Recipe) {
-    this.cart.update((recipes) => [...recipes, recipe]);
+    this._cart.addRecipe(recipe);
   }
 }
