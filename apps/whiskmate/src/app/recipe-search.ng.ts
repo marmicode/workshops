@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -23,39 +24,7 @@ import { RecipePreview } from './recipe-preview.ng';
   `,
 })
 export class RecipeSearch {
-  protected recipes = signal<Recipe[]>([
-    createRecipe({
-      id: 'rec_burger',
-      name: 'Burger',
-      ingredients: ['bun', 'beef', 'lettuce', 'tomato', 'onion', 'pickle'],
-      instructions: [
-        '1. Cook the beef',
-        '2. Put the beef in the bun',
-        '3. Add the lettuce, tomato, onion, and pickle',
-      ],
-    }),
-    createRecipe({
-      id: 'rec_pizza',
-      name: 'Pizza',
-      ingredients: ['dough', 'tomato sauce', 'cheese', 'pepperoni'],
-      instructions: [
-        '1. Roll out the dough',
-        '2. Add the tomato sauce',
-        '3. Add the cheese',
-        '4. Add the pepperoni',
-      ],
-    }),
-    createRecipe({
-      id: 'rec_pasta',
-      name: 'Pasta',
-      ingredients: ['pasta', 'tomato sauce', 'cheese'],
-      instructions: [
-        '1. Cook the pasta',
-        '2. Add the tomato sauce',
-        '3. Add the cheese',
-      ],
-    }),
-  ]);
+  protected recipes = signal<Recipe[]>([]);
   protected recipesWithCartInfo = () => {
     return this.recipes().map((recipe) => ({
       recipe,
@@ -63,8 +32,36 @@ export class RecipeSearch {
     }));
   };
   private _cart = inject(Cart);
+  private _http = inject(HttpClient);
+
+  constructor() {
+    /* DO NOT DO THIS IN REAL LIFE. */
+    this._http
+      .get<RecipeListDto>('https://recipes-api.marmicode.io/recipes')
+      .subscribe((data) => {
+        this.recipes.set(
+          data.items.map((item) =>
+            createRecipe({
+              id: item.id,
+              ingredients: [],
+              instructions: [],
+              name: item.name,
+            })
+          )
+        );
+      });
+  }
 
   protected addToCart(recipe: Recipe) {
     this._cart.addRecipe(recipe);
   }
+}
+
+interface RecipeListDto {
+  items: Array<{
+    id: string;
+    created_at: string;
+    name: string;
+    picture_uri: string;
+  }>;
 }
