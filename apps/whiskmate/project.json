@@ -68,6 +68,26 @@
     "lint": {
       "executor": "@nx/eslint:lint"
     },
+    "karma": {
+      "executor": "@angular/build:karma",
+      "options": {
+        "polyfills": [
+          "zone.js",
+          "zone.js/testing"
+        ],
+        "tsConfig": "{projectRoot}/tsconfig.karma.json",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "{projectRoot}/assets"
+          }
+        ],
+        "styles": [
+          "{projectRoot}/src/styles.css"
+        ]
+      }
+
+    },
     "test": {
       "executor": "@nx/vite:test",
       "outputs": ["{options.reportsDirectory}"],
