@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
 import { Cart } from './cart';
 import { Recipe } from './recipe';
 import { RecipePreview } from './recipe-preview.ng';
 import { RecipeRepository } from './recipe-repository';
+import { marmicodeResource } from './util/resource';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,9 +42,9 @@ import { RecipeRepository } from './recipe-repository';
 })
 export class RecipeSearch {
   private _recipeRepository = inject(RecipeRepository);
-  protected recipes = rxResource({
-    stream: () => this._recipeRepository.getRecipes(),
-  });
+  protected recipes = marmicodeResource(() =>
+    this._recipeRepository.getRecipes(),
+  );
   protected recipesWithCartInfo = () => {
     return this.recipes.value()?.map((recipe) => ({
       recipe,
