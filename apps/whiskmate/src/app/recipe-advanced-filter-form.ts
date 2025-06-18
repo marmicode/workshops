@@ -90,11 +90,9 @@ export class RecipeAdvancedFilterForm {
    * which triggers synchronization even on OnPush components. */
   protected hasKeywordsRequiredError = toSignal(
     this.keywordsCtrl.valueChanges.pipe(
-      map(() => {
-        return (
-          this.keywordsCtrl.dirty && this.keywordsCtrl.hasError('required')
-        );
-      }),
+      map(
+        () => this.keywordsCtrl.dirty && this.keywordsCtrl.hasError('required'),
+      ),
     ),
   );
 
