@@ -5,6 +5,7 @@ import { map } from 'rxjs';
 import { Cart } from './cart';
 import { createRecipe, Recipe } from './recipe';
 import { RecipePreview } from './recipe-preview.ng';
+import { RecipeRepository } from './recipe-repository';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,22 +22,8 @@ import { RecipePreview } from './recipe-preview.ng';
   `,
 })
 export class RecipeSearch {
-  protected recipes = toSignal<Recipe[]>(
-    inject(HttpClient)
-      .get<RecipeListDto>('https://recipes-api.marmicode.io/recipes')
-      .pipe(
-        map((data) => {
-          return data.items.map((item) =>
-            createRecipe({
-              id: item.id,
-              ingredients: [],
-              instructions: [],
-              name: item.name,
-            })
-          );
-        })
-      )
-  );
+  private _recipeRepository = inject(RecipeRepository);
+  protected recipes = toSignal<Recipe[]>(this._recipeRepository.getRecipes());
   protected recipesWithCartInfo = () => {
     return this.recipes()?.map((recipe) => ({
       recipe,
