@@ -10,10 +10,6 @@ import { marmicodeResource } from './util/resource';
 export class RecipeRepository {
   private _http = inject(HttpClient);
 
-  createRecipesResource() {
-    return marmicodeResource(() => this.getRecipes());
-  }
-
   getRecipes() {
     return this._http
       .get<RecipeListDto>('https://recipes-api.marmicode.io/recipes')
@@ -30,6 +26,11 @@ export class RecipeRepository {
         ),
       );
   }
+}
+
+export function createRecipesResource() {
+  const repo = inject(RecipeRepository);
+  return marmicodeResource(() => repo.getRecipes());
 }
 
 interface RecipeListDto {

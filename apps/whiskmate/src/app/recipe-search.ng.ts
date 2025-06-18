@@ -8,8 +8,7 @@ import {
 import { Cart } from './cart';
 import { Recipe } from './recipe';
 import { RecipePreview } from './recipe-preview.ng';
-import { RecipeRepository } from './recipe-repository';
-import { marmicodeResource } from './util/resource';
+import { createRecipesResource } from './recipe-repository';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,7 +46,7 @@ import { marmicodeResource } from './util/resource';
   `,
 })
 export class RecipeSearch {
-  protected recipes = inject(RecipeRepository).createRecipesResource();
+  protected recipes = createRecipesResource();
   protected recipesWithCartInfo = mergeRecipesWithCartInfo(this.recipes.value);
 
   private _cart = inject(Cart);
