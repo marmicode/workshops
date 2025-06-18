@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { suspensify } from '@jscutlery/operators';
-import { Cart } from './cart';
-import { Recipe } from './recipe';
-import { RecipePreview } from './recipe-preview.ng';
+import { Cart } from '../cart/cart';
+import { Recipe } from '../recipe-shared/recipe';
+import { RecipePreview } from '../recipe-shared/recipe-preview.ng';
 import { RecipeRepository } from './recipe-repository';
 
 @Component({

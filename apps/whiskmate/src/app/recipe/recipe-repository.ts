@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable, signal, Signal } from '@angular/core';
 import { debounceTime, map, retry } from 'rxjs';
-import { createRecipe } from './recipe';
-import { marmicodeResource } from './util/resource';
+import { createRecipe } from '../recipe-shared/recipe';
+import { marmicodeResource } from '../util/resource';
 import { rxResource, toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({

@@ -1,5 +1,5 @@
-import { effect, Injectable, signal } from '@angular/core';
-import { Recipe } from './recipe';
+import { Injectable, signal } from '@angular/core';
+import { Recipe } from '../recipe-shared/recipe';
 
 @Injectable({ providedIn: 'root' })
 export class Cart {

@@ -1,8 +1,8 @@
 import { Route } from '@angular/router';
-import { RecipeSearch } from './recipe-search.ng';
-import { CartDetail } from './cart-detail.ng';
-import { NotFound } from './not-found.ng';
-import { recipeRouteHelper } from './recipe-route-helper';
+import { RecipeSearch } from './recipe/feature-search/recipe-search.ng';
+import { CartDetail } from './cart/cart-detail.ng';
+import { NotFound } from './ui/not-found.ng';
+import { recipeRouteHelper } from './recipe/recipe-route-helper';
 
 export const appRoutes: Route[] = [
   {

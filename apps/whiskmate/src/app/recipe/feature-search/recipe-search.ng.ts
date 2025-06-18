@@ -6,11 +6,11 @@ import {
   signal,
   Signal,
 } from '@angular/core';
-import { Cart } from './cart';
-import { Recipe } from './recipe';
+import { Cart } from '../../cart/cart';
+import { Recipe } from '../../recipe-shared/recipe';
 import { RecipeForm } from './recipe-filter-form.ng';
-import { RecipePreview } from './recipe-preview.ng';
-import { createRecipesResource } from './recipe-repository';
+import { RecipePreview } from '../../recipe-shared/recipe-preview.ng';
+import { createRecipesResource } from '../recipe-repository';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

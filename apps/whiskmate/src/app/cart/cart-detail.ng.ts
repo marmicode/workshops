@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Cart } from './cart';
-import { RecipePreview } from './recipe-preview.ng';
+import { RecipePreview } from '../recipe-shared/recipe-preview.ng';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -8,8 +8,8 @@ import { RecipePreview } from './recipe-preview.ng';
   imports: [RecipePreview],
   template: `
     <h2>Cart</h2>
-    @for(recipe of cart.recipes(); track recipe.id) {
-    <app-recipe-preview [recipe]="recipe" />
+    @for (recipe of cart.recipes(); track recipe.id) {
+      <app-recipe-preview [recipe]="recipe" />
     }
   `,
 })
