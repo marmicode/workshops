@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { Cart } from './cart';
 import { Recipe } from './recipe';
+import { RecipeAdvancedFilterForm } from './recipe-advanced-filter-form';
 import { RecipeForm } from './recipe-filter-form.ng';
 import { RecipePreview } from './recipe-preview.ng';
 import { createRecipesResource } from './recipe-repository';
@@ -15,9 +16,10 @@ import { createRecipesResource } from './recipe-repository';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-recipe-search',
-  imports: [RecipePreview, RecipeForm],
+  imports: [RecipePreview, RecipeForm, RecipeAdvancedFilterForm],
   template: `
     <app-recipe-filter-form [(keywords)]="keywords" />
+    <app-recipe-advanced-filter-form />
 
     @if (recipes.isLoading()) {
       <div>Loading...</div>
