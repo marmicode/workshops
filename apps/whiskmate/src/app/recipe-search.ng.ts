@@ -3,18 +3,22 @@ import {
   Component,
   computed,
   inject,
+  signal,
   Signal,
 } from '@angular/core';
 import { Cart } from './cart';
 import { Recipe } from './recipe';
+import { RecipeForm } from './recipe-filter-form.ng';
 import { RecipePreview } from './recipe-preview.ng';
 import { createRecipesResource } from './recipe-repository';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-recipe-search',
-  imports: [RecipePreview],
+  imports: [RecipePreview, RecipeForm],
   template: `
+    <app-recipe-filter-form [(keywords)]="keywords" />
+
     @if (recipes.isLoading()) {
       <div>Loading...</div>
     }
@@ -35,6 +39,10 @@ import { createRecipesResource } from './recipe-repository';
         }
       </section>
     }
+
+    @if (recipes.hasValue() && (recipes.value()?.length ?? 0) > 3) {
+      <app-recipe-filter-form [(keywords)]="keywords" />
+    }
   `,
   styles: `
     .recipes {
@@ -46,6 +54,7 @@ import { createRecipesResource } from './recipe-repository';
   `,
 })
 export class RecipeSearch {
+  protected keywords = signal<string | null>(null);
   protected recipes = createRecipesResource();
   protected recipesWithCartInfo = mergeRecipesWithCartInfo(this.recipes.value);
 
