@@ -16,10 +16,9 @@ import { createRecipesResource } from './recipe-repository';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-recipe-search',
-  imports: [RecipePreview, RecipeForm, RecipeAdvancedFilterForm],
+  imports: [RecipePreview, RecipeForm],
   template: `
     <app-recipe-filter-form [(keywords)]="keywords" />
-    <app-recipe-advanced-filter-form />
 
     @if (recipes.isLoading()) {
       <div>Loading...</div>

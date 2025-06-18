@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CartDetail } from './cart-detail.ng';
-import { RecipeSearch } from './recipe-search.ng';
+import { RouterOutlet } from '@angular/router';
+import { Layout } from './layout.ng';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-root',
-  imports: [RecipeSearch, CartDetail],
+  imports: [RouterOutlet, Layout],
   template: `
-    <app-recipe-search />
-    <hr />
-    <app-cart-detail />
+    <app-layout>
+      <router-outlet />
+    </app-layout>
   `,
 })
 export class App {}
