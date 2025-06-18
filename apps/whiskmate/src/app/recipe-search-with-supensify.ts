@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { suspensify } from '@jscutlery/operators';
 import { Cart } from './cart';
 import { Recipe } from './recipe';
 import { RecipePreview } from './recipe-preview.ng';
@@ -10,16 +11,15 @@ import { RecipeRepository } from './recipe-repository';
   selector: 'app-recipe-search',
   imports: [RecipePreview],
   template: `
-    @if (recipes.isLoading()) {
+    @if (recipes()?.pending) {
       <div>Loading...</div>
     }
 
-    @if (recipes.error()) {
+    @if (recipes()?.hasError) {
       <div>Oups! Something went wrong.</div>
-      <button (click)="recipes.reload()">RELOAD</button>
     }
 
-    @if (recipes.hasValue()) {
+    @if (recipes()?.hasValue) {
       <section class="recipes">
         @for (item of recipesWithCartInfo(); track item.recipe.id) {
           <app-recipe-preview [recipe]="item.recipe">
@@ -42,11 +42,15 @@ import { RecipeRepository } from './recipe-repository';
 })
 export class RecipeSearch {
   private _recipeRepository = inject(RecipeRepository);
-  protected recipes = rxResource({
-    stream: () => this._recipeRepository.getRecipes(),
-  });
+  protected recipes = toSignal(
+    this._recipeRepository.getRecipes().pipe(suspensify()),
+  );
   protected recipesWithCartInfo = () => {
-    return this.recipes.value()?.map((recipe) => ({
+    const suspense = this.recipes();
+    if (!suspense?.hasValue) {
+      return [];
+    }
+    return suspense.value.map((recipe) => ({
       recipe,
       canAdd: this._cart.canAddRecipe(recipe),
     }));
