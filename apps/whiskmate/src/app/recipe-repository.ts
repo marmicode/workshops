@@ -1,8 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { map } from 'rxjs';
+import { inject, Injectable, signal, Signal } from '@angular/core';
+import { debounceTime, map, retry } from 'rxjs';
 import { createRecipe } from './recipe';
 import { marmicodeResource } from './util/resource';
+import { rxResource, toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root',
@@ -36,9 +37,17 @@ export class RecipeRepository {
   }
 }
 
-export function createRecipesResource() {
+export function createRecipesResource(keywords?: Signal<string | null>) {
   const repo = inject(RecipeRepository);
-  return marmicodeResource(() => repo.searchRecipes());
+  return rxResource({
+    params: debounceSignal(keywords ?? signal(null), 100),
+    stream: ({ params }) => repo.searchRecipes(params).pipe(retry(3)),
+  });
+}
+
+/* TODO: move this to util. */
+function debounceSignal<T>(signal: Signal<T>, delay: number) {
+  return toSignal(toObservable(signal).pipe(debounceTime(delay)));
 }
 
 interface RecipeListDto {

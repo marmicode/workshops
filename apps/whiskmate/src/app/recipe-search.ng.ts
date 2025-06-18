@@ -12,7 +12,7 @@ import { Cart } from './cart';
 import { Recipe } from './recipe';
 import { RecipeForm } from './recipe-filter-form.ng';
 import { RecipePreview } from './recipe-preview.ng';
-import { RecipeRepository } from './recipe-repository';
+import { createRecipesResource, RecipeRepository } from './recipe-repository';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,7 +34,10 @@ import { RecipeRepository } from './recipe-repository';
       <section class="recipes">
         @for (item of recipesWithCartInfo(); track item.recipe.id) {
           <app-recipe-preview [recipe]="item.recipe">
-            <button [disabled]="!item.canAdd" (click)="addToCart(item.recipe)">
+            <button
+              [disabled]="!item.canAdd"
+              (click)="cart.addRecipe(item.recipe)"
+            >
               ADD
             </button>
           </app-recipe-preview>
@@ -57,21 +60,24 @@ import { RecipeRepository } from './recipe-repository';
 })
 export class RecipeSearch {
   protected keywords = signal<string | null>(null);
+  protected cart = inject(Cart);
+  protected recipes = createRecipesResource(this.keywords);
+  protected recipesWithCartInfo = mergeRecipesWithCartInfo(this.recipes.value);
 
-  // /* Basic version. */
+  /* Basic version. */
   // protected recipes = rxResource({
   //   params: this.keywords,
   //   stream: ({ params }) => this._repo.searchRecipes(params),
   // });
 
   /* Debounce with: Signal/Resource based + RxJS islands. */
-  protected debouncedKeywords = toSignal(
-    toObservable(this.keywords).pipe(debounceTime(100)),
-  );
-  protected recipes = rxResource({
-    params: this.debouncedKeywords,
-    stream: ({ params }) => this._repo.searchRecipes(params).pipe(retry(3)),
-  });
+  // protected debouncedKeywords = toSignal(
+  //   toObservable(this.keywords).pipe(debounceTime(100)),
+  // );
+  // protected recipes = rxResource({
+  //   params: this.debouncedKeywords,
+  //   stream: ({ params }) => this._repo.searchRecipes(params).pipe(retry(3)),
+  // });
 
   /* Debounce with RxJS island. */
   // protected keywords$ = toObservable(this.keywords);
@@ -84,15 +90,6 @@ export class RecipeSearch {
   //       ),
   //     ),
   // });
-
-  protected recipesWithCartInfo = mergeRecipesWithCartInfo(this.recipes.value);
-
-  private _cart = inject(Cart);
-  private _repo = inject(RecipeRepository);
-
-  protected addToCart(recipe: Recipe) {
-    this._cart.addRecipe(recipe);
-  }
 }
 
 /**
