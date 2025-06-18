@@ -1,13 +1,7 @@
-import { provideHttpClient } from '@angular/common/http';
-import {
-  HttpTestingController,
-  provideHttpClientTesting,
-} from '@angular/common/http/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
+import { render, screen, waitFor } from '@testing-library/angular';
+import { userEvent } from '@testing-library/user-event';
 import { recipeMother } from '../../recipe-shared/testing/recipe.mother';
-import { RecipeRepository } from '../recipe-repository';
 import {
   provideRecipeRepositoryFake,
   RecipeRepositoryFake,
@@ -18,34 +12,47 @@ describe(RecipeSearch.name, () => {
   it('shows all recipes when mounted', async () => {
     const { getRecipeNames } = await mountRecipeSearch();
 
-    const names = getRecipeNames();
-    expect(names).toEqual(['Burger', 'Salad']);
+    await waitFor(() => {
+      expect(getRecipeNames()).toEqual(['Burger', 'Salad', 'Pizza']);
+    });
+  });
+
+  it('filters by keywords', async () => {
+    const { getRecipeNames, typeKeywords } = await mountRecipeSearch();
+
+    await typeKeywords('Bur');
+
+    await waitFor(() => {
+      expect(getRecipeNames()).toEqual(['Burger']);
+    });
   });
 });
 
 async function mountRecipeSearch() {
-  TestBed.configureTestingModule({
+  await render(RecipeSearch, {
     providers: [
       provideZonelessChangeDetection(),
       provideRecipeRepositoryFake(),
     ],
+    configureTestBed(testBed) {
+      testBed.inject(RecipeRepositoryFake).configure({
+        recipes: [
+          recipeMother.withBasicInfo('Burger').build(),
+          recipeMother.withBasicInfo('Salad').build(),
+          recipeMother.withBasicInfo('Pizza').build(),
+        ],
+      });
+    },
   });
-
-  TestBed.inject(RecipeRepositoryFake).configure({
-    recipes: [
-      recipeMother.withBasicInfo('Burger').build(),
-      recipeMother.withBasicInfo('Salad').build(),
-    ],
-  });
-
-  const fixture = TestBed.createComponent(RecipeSearch);
-  await fixture.whenStable();
 
   return {
     getRecipeNames() {
-      return fixture.debugElement
-        .queryAll(By.css('h2'))
-        .map((el) => el.nativeElement.textContent);
+      return screen
+        .getAllByRole('heading', { level: 2 })
+        .map((el) => el.textContent);
+    },
+    async typeKeywords(keywords: string) {
+      await userEvent.type(screen.getByRole('textbox'), keywords);
     },
   };
 }
