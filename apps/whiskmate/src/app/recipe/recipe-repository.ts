@@ -1,9 +1,20 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { inject, Injectable, signal, Signal } from '@angular/core';
+import {
+  inject,
+  Injectable,
+  PendingTasks,
+  signal,
+  Signal,
+} from '@angular/core';
 import { debounceTime, map, retry } from 'rxjs';
 import { createRecipe } from '../recipe-shared/recipe';
 import { marmicodeResource } from '../util/resource';
-import { rxResource, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import {
+  pendingUntilEvent,
+  rxResource,
+  toObservable,
+  toSignal,
+} from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +38,8 @@ export class RecipeRepository {
           data.items.map((item) =>
             createRecipe({
               id: item.id,
+              description: item.description,
+              pictureUri: item.picture_uri,
               ingredients: [],
               instructions: [],
               name: item.name,
@@ -47,7 +60,9 @@ export function createRecipesResource(keywords?: Signal<string | null>) {
 
 /* TODO: move this to util. */
 function debounceSignal<T>(signal: Signal<T>, delay: number) {
-  return toSignal(toObservable(signal).pipe(debounceTime(delay)));
+  return toSignal(
+    toObservable(signal).pipe(debounceTime(delay), pendingUntilEvent()),
+  );
 }
 
 interface RecipeListDto {
@@ -55,6 +70,7 @@ interface RecipeListDto {
     id: string;
     created_at: string;
     name: string;
+    description: string;
     picture_uri: string;
   }>;
 }
