@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  Signal,
+} from '@angular/core';
 import { Cart } from './cart';
 import { Recipe } from './recipe';
 import { RecipePreview } from './recipe-preview.ng';
@@ -41,19 +47,26 @@ import { marmicodeResource } from './util/resource';
   `,
 })
 export class RecipeSearch {
-  private _recipeRepository = inject(RecipeRepository);
-  protected recipes = marmicodeResource(() =>
-    this._recipeRepository.getRecipes(),
-  );
-  protected recipesWithCartInfo = () => {
-    return this.recipes.value()?.map((recipe) => ({
-      recipe,
-      canAdd: this._cart.canAddRecipe(recipe),
-    }));
-  };
+  protected recipes = inject(RecipeRepository).createRecipesResource();
+  protected recipesWithCartInfo = mergeRecipesWithCartInfo(this.recipes.value);
+
   private _cart = inject(Cart);
 
   protected addToCart(recipe: Recipe) {
     this._cart.addRecipe(recipe);
   }
+}
+
+/**
+ * Handy computed signal factory that merges recipes with cart information.
+ * Do not abuse this pattern.
+ */
+function mergeRecipesWithCartInfo(recipes: Signal<Recipe[] | undefined>) {
+  const cart = inject(Cart);
+  return computed(() => {
+    return recipes()?.map((recipe) => ({
+      recipe,
+      canAdd: cart.canAddRecipe(recipe),
+    }));
+  });
 }

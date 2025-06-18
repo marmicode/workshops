@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
-import { createRecipe, Recipe } from './recipe';
+import { map } from 'rxjs';
+import { createRecipe } from './recipe';
+import { marmicodeResource } from './util/resource';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +10,11 @@ import { createRecipe, Recipe } from './recipe';
 export class RecipeRepository {
   private _http = inject(HttpClient);
 
-  getRecipes(): Observable<Recipe[]> {
+  createRecipesResource() {
+    return marmicodeResource(() => this.getRecipes());
+  }
+
+  getRecipes() {
     return this._http
       .get<RecipeListDto>('https://recipes-api.marmicode.io/recipes')
       .pipe(
@@ -20,9 +25,9 @@ export class RecipeRepository {
               ingredients: [],
               instructions: [],
               name: item.name,
-            })
-          )
-        )
+            }),
+          ),
+        ),
       );
   }
 }
