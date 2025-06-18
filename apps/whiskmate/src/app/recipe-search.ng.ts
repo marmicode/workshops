@@ -6,13 +6,11 @@ import {
   signal,
   Signal,
 } from '@angular/core';
-import { rxResource, toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { debounceTime, retry, Subject, switchMap } from 'rxjs';
 import { Cart } from './cart';
 import { Recipe } from './recipe';
 import { RecipeForm } from './recipe-filter-form.ng';
 import { RecipePreview } from './recipe-preview.ng';
-import { createRecipesResource, RecipeRepository } from './recipe-repository';
+import { createRecipesResource } from './recipe-repository';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
