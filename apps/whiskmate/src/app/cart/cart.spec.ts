@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { recipeMother } from '../recipe-shared/testing/recipe.mother';
 import { Cart } from './cart';
+import { describe, it, expect } from 'vitest';
 
 describe(Cart.name, () => {
   it('adds recipes', async () => {
@@ -13,8 +14,8 @@ describe(Cart.name, () => {
     cart.addRecipe(salad);
 
     expect(cart.recipes()).toEqual([
-      jasmine.objectContaining({ name: 'Burger' }),
-      jasmine.objectContaining({ name: 'Salad' }),
+      expect.objectContaining({ name: 'Burger' }),
+      expect.objectContaining({ name: 'Salad' }),
     ]);
   });
 });

@@ -7,14 +7,13 @@ import {
   RecipeRepositoryFake,
 } from '../recipe-repository.fake';
 import { RecipeSearch } from './recipe-search.ng';
+import { describe, expect, it } from 'vitest';
 
 describe(RecipeSearch.name, () => {
   it('shows all recipes when mounted', async () => {
     const { getRecipeNames } = await mountRecipeSearch();
 
-    await waitFor(() => {
-      expect(getRecipeNames()).toEqual(['Burger', 'Salad', 'Pizza']);
-    });
+    await expect.poll(getRecipeNames).toEqual(['Burger', 'Salad', 'Pizza']);
   });
 
   it('filters by keywords', async () => {
@@ -22,9 +21,7 @@ describe(RecipeSearch.name, () => {
 
     await typeKeywords('Bur');
 
-    await waitFor(() => {
-      expect(getRecipeNames()).toEqual(['Burger']);
-    });
+    await expect.poll(getRecipeNames).toEqual(['Burger']);
   });
 });
 
