@@ -6,12 +6,13 @@ import {
   signal,
   Signal,
 } from '@angular/core';
+import { rxResource, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { debounceTime, retry, Subject, switchMap } from 'rxjs';
 import { Cart } from './cart';
 import { Recipe } from './recipe';
-import { RecipeAdvancedFilterForm } from './recipe-advanced-filter-form';
 import { RecipeForm } from './recipe-filter-form.ng';
 import { RecipePreview } from './recipe-preview.ng';
-import { createRecipesResource } from './recipe-repository';
+import { RecipeRepository } from './recipe-repository';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,7 +42,7 @@ import { createRecipesResource } from './recipe-repository';
       </section>
     }
 
-    @if (recipes.hasValue() && (recipes.value()?.length ?? 0) > 3) {
+    @if (recipes.hasValue() && recipes.value().length > 3) {
       <app-recipe-filter-form [(keywords)]="keywords" />
     }
   `,
@@ -56,10 +57,38 @@ import { createRecipesResource } from './recipe-repository';
 })
 export class RecipeSearch {
   protected keywords = signal<string | null>(null);
-  protected recipes = createRecipesResource();
+
+  // /* Basic version. */
+  // protected recipes = rxResource({
+  //   params: this.keywords,
+  //   stream: ({ params }) => this._repo.searchRecipes(params),
+  // });
+
+  /* Debounce with: Signal/Resource based + RxJS islands. */
+  protected debouncedKeywords = toSignal(
+    toObservable(this.keywords).pipe(debounceTime(100)),
+  );
+  protected recipes = rxResource({
+    params: this.debouncedKeywords,
+    stream: ({ params }) => this._repo.searchRecipes(params).pipe(retry(3)),
+  });
+
+  /* Debounce with RxJS island. */
+  // protected keywords$ = toObservable(this.keywords);
+  // protected recipes = rxResource({
+  //   stream: () =>
+  //     this.keywords$.pipe(
+  //       debounceTime(100),
+  //       switchMap((keywords) =>
+  //         this._repo.searchRecipes(keywords).pipe(retry(3)),
+  //       ),
+  //     ),
+  // });
+
   protected recipesWithCartInfo = mergeRecipesWithCartInfo(this.recipes.value);
 
   private _cart = inject(Cart);
+  private _repo = inject(RecipeRepository);
 
   protected addToCart(recipe: Recipe) {
     this._cart.addRecipe(recipe);

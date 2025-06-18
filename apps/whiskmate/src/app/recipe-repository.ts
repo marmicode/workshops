@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map } from 'rxjs';
 import { createRecipe } from './recipe';
@@ -10,9 +10,17 @@ import { marmicodeResource } from './util/resource';
 export class RecipeRepository {
   private _http = inject(HttpClient);
 
-  getRecipes() {
+  searchRecipes(keywords?: string | null) {
+    let params = new HttpParams();
+
+    if (keywords) {
+      params = params.set('q', keywords);
+    }
+
     return this._http
-      .get<RecipeListDto>('https://recipes-api.marmicode.io/recipes')
+      .get<RecipeListDto>('https://recipes-api.marmicode.io/recipes', {
+        params,
+      })
       .pipe(
         map((data) =>
           data.items.map((item) =>
@@ -30,7 +38,7 @@ export class RecipeRepository {
 
 export function createRecipesResource() {
   const repo = inject(RecipeRepository);
-  return marmicodeResource(() => repo.getRecipes());
+  return marmicodeResource(() => repo.searchRecipes());
 }
 
 interface RecipeListDto {

@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  model,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -17,7 +12,6 @@ import { FormsModule } from '@angular/forms';
       name="keywords"
       placeholder="Search recipes..."
     />
-    <button type="submit">SEARCH</button>
   </form>`,
 })
 export class RecipeForm {

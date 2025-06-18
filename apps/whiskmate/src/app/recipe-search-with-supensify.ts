@@ -43,7 +43,7 @@ import { RecipeRepository } from './recipe-repository';
 export class RecipeSearch {
   private _recipeRepository = inject(RecipeRepository);
   protected recipes = toSignal(
-    this._recipeRepository.getRecipes().pipe(suspensify()),
+    this._recipeRepository.searchRecipes().pipe(suspensify()),
   );
   protected recipesWithCartInfo = () => {
     const suspense = this.recipes();
