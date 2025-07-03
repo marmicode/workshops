@@ -1,24 +1,15 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import {
-  inject,
-  Injectable,
-  PendingTasks,
-  signal,
-  Signal,
-} from '@angular/core';
-import { debounceTime, map, retry } from 'rxjs';
-import { createRecipe } from '../recipe-shared/recipe';
-import { marmicodeResource } from '../util/resource';
+import { inject, Injectable, signal, Signal } from '@angular/core';
 import {
   pendingUntilEvent,
   rxResource,
   toObservable,
   toSignal,
 } from '@angular/core/rxjs-interop';
+import { debounceTime, map, retry } from 'rxjs';
+import { createRecipe } from '../recipe-shared/recipe';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class RecipeRepository {
   private _http = inject(HttpClient);
 

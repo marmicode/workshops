@@ -1,10 +1,5 @@
 import { JsonPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { outputFromObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
@@ -15,7 +10,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { debounceTime, EMPTY, map } from 'rxjs';
+import { debounceTime, map } from 'rxjs';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -118,11 +113,7 @@ const noDuplicatesValidator: ValidatorFn = (ctrl: AbstractControl) => {
   const hasDuplicates = new Set(values).size !== values.length;
 
   if (hasDuplicates) {
-    return {
-      noDuplicates: {
-        message: 'Tags must be unique.',
-      },
-    };
+    return { noDuplicates: { message: 'Tags must be unique.' } };
   }
   return null;
 };

@@ -1,13 +1,13 @@
 import { provideZonelessChangeDetection } from '@angular/core';
-import { render, screen, waitFor } from '@testing-library/angular';
+import { render, screen } from '@testing-library/angular';
 import { userEvent } from '@testing-library/user-event';
+import { describe, expect, it } from 'vitest';
 import { recipeMother } from '../../recipe-shared/testing/recipe.mother';
 import {
   provideRecipeRepositoryFake,
   RecipeRepositoryFake,
 } from '../recipe-repository.fake';
 import { RecipeSearch } from './recipe-search.ng';
-import { describe, expect, it } from 'vitest';
 
 describe(RecipeSearch.name, () => {
   it('shows all recipes when mounted', async () => {
@@ -32,13 +32,15 @@ async function mountRecipeSearch() {
       provideRecipeRepositoryFake(),
     ],
     configureTestBed(testBed) {
-      testBed.inject(RecipeRepositoryFake).configure({
-        recipes: [
-          recipeMother.withBasicInfo('Burger').build(),
-          recipeMother.withBasicInfo('Salad').build(),
-          recipeMother.withBasicInfo('Pizza').build(),
-        ],
-      });
+      testBed
+        .inject(RecipeRepositoryFake)
+        .configure({
+          recipes: [
+            recipeMother.withBasicInfo('Burger').build(),
+            recipeMother.withBasicInfo('Salad').build(),
+            recipeMother.withBasicInfo('Pizza').build(),
+          ],
+        });
     },
   });
 
