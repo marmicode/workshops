@@ -1,38 +1,45 @@
+import { InjectionToken, Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { recipeMother } from '../testing/recipe.mother';
+import { recipePreviewGlove } from './recipe-preview.glove';
 import {
   provideRecipeRepositoryFake,
   RecipeRepositoryFake,
 } from './recipe-repository.fake';
+import { recipeMother } from '../testing/recipe.mother';
 import { RecipeSearch } from './recipe-search.ng';
 
 describe(RecipeSearch.name, () => {
   it('should search recipes without filtering', async () => {
-    const { getRecipeNames } = await renderComponent();
+    await renderComponent();
 
-    expect(getRecipeNames()).toEqual(['Burger', 'Salad']);
+    const recipePreviews = await recipePreviewGlove.findAllRecipePreviews();
+    expect.soft(recipePreviews).toHaveLength(2);
+    expect.soft(await recipePreviews[0].findName()).toHaveTextContent('Burger');
+    expect.soft(await recipePreviews[1].findName()).toHaveTextContent('Salad');
   });
 
   async function renderComponent() {
-    TestBed.configureTestingModule({
-      providers: [provideRecipeRepositoryFake()],
-    });
-
-    TestBed.inject(RecipeRepositoryFake).setRecipes([
+    t.configure({ providers: [provideRecipeRepositoryFake()] });
+    t.inject(RecipeRepositoryFake).setRecipes([
       recipeMother.withBasicInfo('Burger').build(),
       recipeMother.withBasicInfo('Salad').build(),
     ]);
-
-    const fixture = TestBed.createComponent(RecipeSearch);
-    await fixture.whenStable();
-
-    return {
-      getRecipeNames() {
-        return fixture.debugElement
-          .queryAll(By.css('[data-testid=recipe-name]'))
-          .map((el) => el.nativeElement.textContent);
-      },
-    };
+    await t.mount(RecipeSearch);
   }
 });
+
+const t = {
+  configure(args: Parameters<typeof TestBed.configureTestingModule>[0]) {
+    TestBed.configureTestingModule(args);
+  },
+  inject<T extends Type<unknown>>(
+    token: T | InjectionToken<T>,
+  ): InstanceType<T> {
+    return TestBed.inject(token);
+  },
+  async mount<CMP extends Type<unknown>>(component: CMP) {
+    const fixture = TestBed.createComponent(component);
+    await fixture.whenStable();
+    return fixture;
+  },
+};
