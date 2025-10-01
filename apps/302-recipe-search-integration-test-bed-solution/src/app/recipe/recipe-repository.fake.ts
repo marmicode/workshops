@@ -19,7 +19,10 @@ export class RecipeRepositoryFake implements RecipeRepositoryDef {
       const recipes = this._recipes.filter((recipe) => {
         const conditions = [
           /* Filter by keywords. */
-          () => (keywords ? recipe.name.includes(keywords) : true),
+          () =>
+            keywords
+              ? recipe.name.toLowerCase().includes(keywords.toLowerCase())
+              : true,
           /* Filter by max ingredients. */
           () =>
             maxIngredientCount != null
