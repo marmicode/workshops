@@ -1,6 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { By } from '@angular/platform-browser';
-import { render } from '@testing-library/angular';
+import { render, screen } from '@testing-library/angular';
 import { recipeMother } from '../testing/recipe.mother';
 import { RecipeFilterCriteria } from './recipe-filter-criteria';
 import {
@@ -8,6 +8,7 @@ import {
   RecipeRepositoryFake,
 } from './recipe-repository.fake';
 import { RecipeSearch } from './recipe-search.ng';
+import { TestBed } from '@angular/core/testing';
 
 describe(RecipeSearch.name, () => {
   it('should search recipes without filtering', async () => {
@@ -24,7 +25,22 @@ describe(RecipeSearch.name, () => {
       maxIngredientCount: 3,
     });
 
-    expect(getRecipeNames()).toEqual(['Burger']);
+    await expect.poll(() => getRecipeNames()).toEqual(['Burger']);
+  });
+
+  it('displays loading state when searching', async () => {
+    const { getRecipeNames, getLoadingSpinner, updateFilter, fake } =
+      await renderComponent();
+
+    fake.pause();
+
+    updateFilter({
+      keywords: 'Burg',
+      maxIngredientCount: 3,
+    });
+
+    await expect.poll(() => getRecipeNames()).toEqual([]);
+    await expect.poll(() => getLoadingSpinner()).toBeInTheDocument();
   });
 
   async function renderComponent() {
@@ -49,6 +65,7 @@ describe(RecipeSearch.name, () => {
     await fixture.whenStable();
 
     return {
+      fake: TestBed.inject(RecipeRepositoryFake),
       getRecipeNames() {
         return debugElement
           .queryAll(By.css('wm-recipe-preview'))
@@ -58,7 +75,9 @@ describe(RecipeSearch.name, () => {
         debugElement
           .query(By.css('wm-recipe-filter'))
           .triggerEventHandler('filterChange', filter);
-        await fixture.whenStable();
+      },
+      getLoadingSpinner() {
+        return screen.getByRole('progressbar');
       },
     };
   }

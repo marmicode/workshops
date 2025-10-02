@@ -17,6 +17,9 @@ import { RecipeRepository } from './recipe-repository';
   imports: [Catalog, RecipeFilter, RecipePreview],
   template: `
     <wm-recipe-filter (filterChange)="filter.set($event)"></wm-recipe-filter>
+    @if (recipes.isLoading()) {
+      <div role="progressbar">Loading...</div>
+    }
     <wm-catalog>
       @if (recipes.hasValue()) {
         @for (recipe of recipes.value(); track recipe.id) {

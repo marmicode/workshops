@@ -1,6 +1,6 @@
 import { Injectable, Provider } from '@angular/core';
 import { RecipeFilterCriteria } from './recipe-filter-criteria';
-import { defer, Observable, of } from 'rxjs';
+import { defer, delay, Observable, of } from 'rxjs';
 import { Recipe } from './recipe';
 import { RecipeRepository, RecipeRepositoryDef } from './recipe-repository';
 
@@ -10,12 +10,26 @@ import { RecipeRepository, RecipeRepositoryDef } from './recipe-repository';
 export class RecipeRepositoryFake implements RecipeRepositoryDef {
   private _recipes: Recipe[] = [];
 
+  private _pausedPromise = Promise.resolve();
+  private _pausedPromiseResolver?: () => void;
+
+  pause() {
+    this._pausedPromise = new Promise((resolve) => {
+      this._pausedPromiseResolver = resolve;
+    });
+  }
+
+  resume() {
+    this._pausedPromiseResolver?.();
+  }
+
   search({
     keywords,
     maxIngredientCount,
     maxStepCount,
   }: RecipeFilterCriteria = {}): Observable<Recipe[]> {
-    return defer(() => {
+    return defer(async () => {
+      await this._pausedPromise;
       const recipes = this._recipes.filter((recipe) => {
         const conditions = [
           /* Filter by keywords. */
@@ -33,7 +47,7 @@ export class RecipeRepositoryFake implements RecipeRepositoryDef {
         /* Return true if all conditions are true. */
         return conditions.every((condition) => condition());
       });
-      return of(recipes);
+      return recipes;
     });
   }
 
