@@ -18,7 +18,7 @@ import { RecipeAddButton } from '../meal-planner/recipe-add-button.ng';
   imports: [Catalog, RecipeAddButton, RecipeFilter, RecipePreview],
   template: `
     <wm-recipe-filter (filterChange)="filter.set($event)"></wm-recipe-filter>
-    <wm-catalog>
+    <wm-catalog data-testid="catalog">
       @if (recipes.hasValue()) {
         @for (recipe of recipes.value(); track recipe.id) {
           <wm-recipe-preview [recipe]="recipe">
