@@ -1,15 +1,37 @@
+import { effect } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { Recipe } from '../recipe/recipe';
 import { recipeMother } from '../testing/recipe.mother';
 import { MealPlanner } from './meal-planner';
 
 describe(MealPlanner.name, () => {
+  it('should be reactive', async () => {
+    const { mealPlanner, burger, salad } = createMealPlanner();
+
+    const spy = vi.fn<(reciopes: Recipe[]) => void>();
+    runEffect(() => {
+      spy(mealPlanner.recipes());
+    });
+
+    spy.mockClear();
+    mealPlanner.addRecipe(burger);
+    mealPlanner.addRecipe(salad);
+
+    await expect
+      .poll(() => spy)
+      .toHaveBeenCalledExactlyOnceWith([
+        expect.objectContaining({ name: 'Burger' }),
+        expect.objectContaining({ name: 'Salad' }),
+      ]);
+  });
+
   it('should add recipe', () => {
     const { mealPlanner, burger, salad } = createMealPlanner();
 
     mealPlanner.addRecipe(burger);
     mealPlanner.addRecipe(salad);
 
-    expect(mealPlanner.getRecipes()).toEqual([
+    expect(mealPlanner.recipes()).toEqual([
       expect.objectContaining({ name: 'Burger' }),
       expect.objectContaining({ name: 'Salad' }),
     ]);
@@ -55,3 +77,9 @@ describe(MealPlanner.name, () => {
     };
   }
 });
+
+function runEffect(effectFn: () => void) {
+  TestBed.runInInjectionContext(() => {
+    effect(effectFn);
+  });
+}

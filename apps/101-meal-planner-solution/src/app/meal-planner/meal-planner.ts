@@ -1,24 +1,21 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Recipe } from '../recipe/recipe';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MealPlanner {
-  private _recipes: Recipe[] = [];
+  private _recipes = signal<Recipe[]>([]);
+  recipes = this._recipes.asReadonly();
 
   canAddRecipe(recipe: Recipe): boolean {
-    return this._recipes.find((_recipe) => recipe.id === _recipe.id) == null;
-  }
-
-  getRecipes(): Recipe[] {
-    return this._recipes;
+    return this.recipes().find((_recipe) => recipe.id === _recipe.id) == null;
   }
 
   addRecipe(recipe: Recipe) {
     if (!this.canAddRecipe(recipe)) {
       throw new Error(`Can't add recipe.`);
     }
-    this._recipes = [...this._recipes, recipe];
+    this._recipes.update((recipes) => [...recipes, recipe]);
   }
 }
