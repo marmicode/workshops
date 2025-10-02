@@ -25,7 +25,7 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: [
     {
-      command: 'npx nx serve 404-recipe-filter-material-starter',
+      command: 'npx nx serve 404-recipe-filter-material-starter -c testing',
       url: 'http://localhost:4200',
       reuseExistingServer: true,
       cwd: workspaceRoot,

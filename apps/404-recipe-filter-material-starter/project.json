@@ -45,6 +45,19 @@
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true
+        },
+        "testing": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "fileReplacements": [
+            {
+              "replace": "{projectRoot}/src/environments/environment.ts",
+              "with": "{projectRoot}/src/environments/environment.testing.ts"
+            }
+          ]
         }
       },
       "defaultConfiguration": "production"
@@ -57,6 +70,9 @@
         },
         "development": {
           "buildTarget": ":build:development"
+        },
+        "testing": {
+          "buildTarget": ":build:testing"
         }
       },
       "defaultConfiguration": "development",
