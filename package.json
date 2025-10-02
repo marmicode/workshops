@@ -80,7 +80,7 @@
     "dotenv": "10.0.0",
     "eslint": "8.57.0",
     "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-playwright": "^0.15.3",
+    "eslint-plugin-playwright": "^1.6.2",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.6.0",
     "jest": "30.0.5",
