@@ -12,7 +12,6 @@ import { Recipe } from './recipe';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wm-recipe-selector',
-  imports: [],
   template: `
     <ul>
       @for (recipe of recipesWithSelection(); track recipe.id) {

@@ -1,7 +1,7 @@
 import { inputBinding } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { within } from '@testing-library/angular';
-import userEvent from '@testing-library/user-event';
+import { userEvent } from 'vitest/browser';
 import { describe, expect, it, vi } from 'vitest';
 import { RecipeSelectionStore, RecipeSelector } from './recipe-selector';
 import { recipeMother } from './recipe.mother';
