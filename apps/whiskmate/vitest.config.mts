@@ -5,6 +5,7 @@ import viteConfigFn from './vite.config.mjs';
 
 const testsPatterns = ['**/*.spec.ts'];
 const browserTestsPatterns = ['**/*.browser.spec.ts'];
+const karmaTestsPatterns = ['**/*.karma.spec.ts'];
 const wideTestsPatterns = ['**/*.wide.spec.ts'];
 export default defineConfig((...args) => {
   return mergeConfig(
@@ -29,7 +30,11 @@ export default defineConfig((...args) => {
               name: 'emulated',
               environment: 'jsdom',
               include: testsPatterns,
-              exclude: [...browserTestsPatterns, ...wideTestsPatterns],
+              exclude: [
+                ...browserTestsPatterns,
+                ...wideTestsPatterns,
+                ...karmaTestsPatterns,
+              ],
             },
           },
           {
@@ -38,6 +43,7 @@ export default defineConfig((...args) => {
               name: 'wide',
               environment: 'jsdom',
               include: wideTestsPatterns,
+              exclude: karmaTestsPatterns,
             },
           },
           {
@@ -50,6 +56,7 @@ export default defineConfig((...args) => {
                 provider: playwright(),
                 instances: [{ browser: 'chromium' }],
               },
+              exclude: karmaTestsPatterns,
             },
           },
         ],

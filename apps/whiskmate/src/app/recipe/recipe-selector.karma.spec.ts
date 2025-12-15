@@ -1,30 +1,18 @@
 import { TestBed } from '@angular/core/testing';
-import { render, within } from '@testing-library/angular';
+import { render, waitFor, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
 import { RecipeSelectionStore, RecipeSelector } from './recipe-selector';
 import { recipeMother } from './recipe.mother';
 
 describe(RecipeSelector.name, () => {
   it('display recipes', async () => {
-    const { getRecipeItems } = await mountRecipeSelector();
+    const { findRecipeItems } = await mountRecipeSelector();
 
-    await expect.poll(() => getRecipeItems()).toHaveLength(3);
-    expect.soft(getRecipeItems()[0]).toHaveTextContent('Burger');
-    expect.soft(getRecipeItems()[1]).toHaveTextContent('Salad');
-    expect.soft(getRecipeItems()[2]).toHaveTextContent('Pizza');
-  });
-
-  it('display recipes if you need to wait for many things', async () => {
-    const { getRecipeItems } = await mountRecipeSelector();
-
-    await vi.waitFor(async () => {
-      const recipeItems = getRecipeItems();
-      expect(recipeItems).toHaveLength(3);
-      expect(recipeItems[0]).toHaveTextContent('Burger');
-      expect(recipeItems[1]).toHaveTextContent('Salad');
-      expect(recipeItems[2]).toHaveTextContent('Pizza');
-    });
+    const recipeEls = await findRecipeItems();
+    expect(recipeEls.length).toBe(3);
+    expect(recipeEls[0].textContent).toContain('Burger');
+    expect(recipeEls[1].textContent).toContain('Salad');
+    expect(recipeEls[2].textContent).toContain('Pizza');
   });
 
   it('selects recipes in RecipeStore', async () => {
@@ -34,9 +22,12 @@ describe(RecipeSelector.name, () => {
     await clickRecipeItemCheckboxAt(0); // Burger
     await clickRecipeItemCheckboxAt(2); // Pizza
 
-    await expect
-      .poll(() => recipeSelectionStore.selectedRecipeIds())
-      .toEqual(['rec_burger', 'rec_pizza']);
+    await waitFor(() => {
+      throwUnless(recipeSelectionStore.selectedRecipeIds()).toEqual([
+        'rec_burger',
+        'rec_pizza',
+      ]);
+    });
   });
 
   it('selects recipes that are selected in RecipeStore', async () => {
@@ -46,11 +37,11 @@ describe(RecipeSelector.name, () => {
     recipeSelectionStore.selectRecipe('rec_burger');
     recipeSelectionStore.selectRecipe('rec_pizza');
 
-    await vi.waitFor(() => {
+    await waitFor(() => {
       const recipeItems = getRecipeItemCheckboxes();
-      expect(recipeItems[0].checked).toBe(true);
-      expect(recipeItems[1].checked).toBe(false);
-      expect(recipeItems[2].checked).toBe(true);
+      throwUnless(recipeItems[0].checked).toBe(true);
+      throwUnless(recipeItems[1].checked).toBe(false);
+      throwUnless(recipeItems[2].checked).toBe(true);
     });
   });
 });
@@ -66,7 +57,6 @@ async function mountRecipeSelector() {
     },
   });
 
-  const getRecipeItems = () => within(container).getAllByRole('listitem');
   const findRecipeItems = () => within(container).findAllByRole('listitem');
 
   return {
@@ -77,7 +67,7 @@ async function mountRecipeSelector() {
         await within(recipeEls[index]).findByRole('checkbox'),
       );
     },
-    getRecipeItems,
+    findRecipeItems,
     getRecipeItemCheckboxes: () =>
       within(container).getAllByRole<HTMLInputElement>('checkbox'),
     recipeSelectionStore: TestBed.inject(RecipeSelectionStore),

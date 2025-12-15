@@ -109,12 +109,14 @@
     "unit-test": {
       "executor": "@angular/build:unit-test",
       "options": {
+        "exclude": ["**/*.karma.spec.ts"],
         "browsers": ["chromium"]
       }
     },
     "unit-test-karma": {
       "executor": "@angular/build:unit-test",
       "options": {
+        "include": ["**/*.karma.spec.ts"],
         "runner": "karma"
       }
     }
