@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { render, within, screen } from '@testing-library/angular';
+import { render, waitFor, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { RecipeSelectionStore, RecipeSelector } from './recipe-selector';
 import { recipeMother } from './recipe.mother';
@@ -22,36 +22,27 @@ describe(RecipeSelector.name, () => {
     await clickRecipeItemCheckboxAt(0); // Burger
     await clickRecipeItemCheckboxAt(2); // Pizza
 
-    expect(recipeSelectionStore.selectedRecipeIds()).toEqual([
-      'rec_burger',
-      'rec_pizza',
-    ]);
+    await waitFor(() => {
+      throwUnless(recipeSelectionStore.selectedRecipeIds()).toEqual([
+        'rec_burger',
+        'rec_pizza',
+      ]);
+    });
   });
 
   it('selects recipes that are selected in RecipeStore', async () => {
-    const { recipeSelectionStore } = await mountRecipeSelector();
+    const { recipeSelectionStore, getRecipeItemCheckboxes } =
+      await mountRecipeSelector();
 
     recipeSelectionStore.selectRecipe('rec_burger');
     recipeSelectionStore.selectRecipe('rec_pizza');
 
-    expect(
-      await screen.findByRole('checkbox', {
-        name: 'Select Burger',
-        checked: true,
-      }),
-    ).toBeDefined();
-    expect(
-      await screen.findByRole('checkbox', {
-        name: 'Select Salad',
-        checked: false,
-      }),
-    ).toBeDefined();
-    expect(
-      await screen.findByRole('checkbox', {
-        name: 'Select Pizza',
-        checked: true,
-      }),
-    ).toBeDefined();
+    await waitFor(() => {
+      const recipeItems = getRecipeItemCheckboxes();
+      throwUnless(recipeItems[0].checked).toBe(true);
+      throwUnless(recipeItems[1].checked).toBe(false);
+      throwUnless(recipeItems[2].checked).toBe(true);
+    });
   });
 });
 
@@ -77,6 +68,8 @@ async function mountRecipeSelector() {
       );
     },
     findRecipeItems,
+    getRecipeItemCheckboxes: () =>
+      within(container).getAllByRole<HTMLInputElement>('checkbox'),
     recipeSelectionStore: TestBed.inject(RecipeSelectionStore),
   };
 }

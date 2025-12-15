@@ -72,5 +72,10 @@
     "typescript-eslint": "^8.40.0",
     "vite": "^7.0.0",
     "vitest": "^4.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "jasmine-core": "^5.1.0"
+    }
   }
 }
