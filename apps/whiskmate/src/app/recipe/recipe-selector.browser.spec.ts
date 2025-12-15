@@ -1,31 +1,19 @@
 import { inputBinding } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { within } from '@testing-library/angular';
-import { userEvent } from 'vitest/browser';
+import { page } from 'vitest/browser';
 import { describe, expect, it, vi } from 'vitest';
 import { RecipeSelectionStore, RecipeSelector } from './recipe-selector';
 import { recipeMother } from './recipe.mother';
 
 describe(RecipeSelector.name, () => {
   it('display recipes', async () => {
-    const { getRecipeItems } = await mountRecipeSelector();
+    const { recipeItemsLocator } = await mountRecipeSelector();
 
-    await expect.poll(() => getRecipeItems()).toHaveLength(3);
-    expect.soft(getRecipeItems()[0]).toHaveTextContent('Burger');
-    expect.soft(getRecipeItems()[1]).toHaveTextContent('Salad');
-    expect.soft(getRecipeItems()[2]).toHaveTextContent('Pizza');
-  });
-
-  it('display recipes if you need to wait for many things', async () => {
-    const { getRecipeItems } = await mountRecipeSelector();
-
-    await vi.waitFor(async () => {
-      const recipeItems = getRecipeItems();
-      expect(recipeItems).toHaveLength(3);
-      expect(recipeItems[0]).toHaveTextContent('Burger');
-      expect(recipeItems[1]).toHaveTextContent('Salad');
-      expect(recipeItems[2]).toHaveTextContent('Pizza');
-    });
+    await expect.element(recipeItemsLocator).toHaveLength(3);
+    await expect.element(recipeItemsLocator.nth(0)).toHaveTextContent('Burger');
+    await expect.element(recipeItemsLocator.nth(1)).toHaveTextContent('Salad');
+    await expect.element(recipeItemsLocator.nth(2)).toHaveTextContent('Pizza');
   });
 
   it('selects recipes in RecipeStore', async () => {
@@ -46,14 +34,11 @@ describe(RecipeSelector.name, () => {
     recipeSelectionStore.selectRecipe('rec_burger');
     recipeSelectionStore.selectRecipe('rec_pizza');
 
-    const { getRecipeItemCheckboxes } = mount();
+    const { recipeItemCheckboxesLocator } = mount();
 
-    await vi.waitFor(() => {
-      const recipeItems = getRecipeItemCheckboxes();
-      expect(recipeItems[0].checked).toBe(true);
-      expect(recipeItems[1].checked).toBe(false);
-      expect(recipeItems[2].checked).toBe(true);
-    });
+    await expect.element(recipeItemCheckboxesLocator.nth(0)).toBeChecked();
+    await expect.element(recipeItemCheckboxesLocator.nth(1)).not.toBeChecked();
+    await expect.element(recipeItemCheckboxesLocator.nth(2)).toBeChecked();
   });
 });
 
@@ -78,7 +63,7 @@ async function setUpRecipeSelector() {
   return {
     recipeSelectionStore: TestBed.inject(RecipeSelectionStore),
     mount() {
-      const { nativeElement } = TestBed.createComponent(RecipeSelector, {
+      TestBed.createComponent(RecipeSelector, {
         bindings: [
           inputBinding('recipes', () => [
             recipeMother.withBasicInfo('Burger').build(),
@@ -88,22 +73,16 @@ async function setUpRecipeSelector() {
         ],
       });
 
-      const getRecipeItems = () =>
-        within(nativeElement).getAllByRole('listitem');
-      const findRecipeItems = () =>
-        within(nativeElement).findAllByRole('listitem');
+      const recipeItemsLocator = page.getByRole('listitem');
+      const recipeItemCheckboxesLocator =
+        recipeItemsLocator.getByRole('checkbox');
 
       return {
         clickRecipeItemCheckboxAt: async (index: number) => {
-          const recipeEls = await findRecipeItems();
-          // TODO: or userEvent.click(recipeEls[index]) if the whole element is clickable.
-          await userEvent.click(
-            await within(recipeEls[index]).findByRole('checkbox'),
-          );
+          await recipeItemCheckboxesLocator.nth(index).click();
         },
-        getRecipeItems,
-        getRecipeItemCheckboxes: () =>
-          within(nativeElement).getAllByRole<HTMLInputElement>('checkbox'),
+        recipeItemsLocator,
+        recipeItemCheckboxesLocator,
       };
     },
   };
