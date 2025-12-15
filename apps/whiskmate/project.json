@@ -111,6 +111,12 @@
       "options": {
         "browsers": ["chromium"]
       }
+    },
+    "unit-test-karma": {
+      "executor": "@angular/build:unit-test",
+      "options": {
+        "runner": "karma"
+      }
     }
   }
 }

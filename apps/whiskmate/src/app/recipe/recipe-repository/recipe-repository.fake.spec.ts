@@ -1,4 +1,4 @@
-import { describe } from 'node:test';
+import { describe } from 'vitest';
 import {
   provideRecipeRepositoryFake,
   RecipeRepositoryFake,
