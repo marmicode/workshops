@@ -1,5 +1,6 @@
+import { inputBinding } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { render, within } from '@testing-library/angular';
+import { within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { RecipeSelectionStore, RecipeSelector } from './recipe-selector';
@@ -40,11 +41,12 @@ describe(RecipeSelector.name, () => {
   });
 
   it('selects recipes that are selected in RecipeStore', async () => {
-    const { recipeSelectionStore, getRecipeItemCheckboxes } =
-      await mountRecipeSelector();
+    const { mount, recipeSelectionStore } = await setUpRecipeSelector();
 
     recipeSelectionStore.selectRecipe('rec_burger');
     recipeSelectionStore.selectRecipe('rec_pizza');
+
+    const { getRecipeItemCheckboxes } = mount();
 
     await vi.waitFor(() => {
       const recipeItems = getRecipeItemCheckboxes();
@@ -56,30 +58,53 @@ describe(RecipeSelector.name, () => {
 });
 
 async function mountRecipeSelector() {
-  const { container } = await render(RecipeSelector, {
-    inputs: {
-      recipes: [
-        recipeMother.withBasicInfo('Burger').build(),
-        recipeMother.withBasicInfo('Salad').build(),
-        recipeMother.withBasicInfo('Pizza').build(),
-      ],
-    },
+  const { mount, ...rest } = await setUpRecipeSelector();
+  const mountUtils = mount();
+  return {
+    ...rest,
+    ...mountUtils,
+  };
+}
+
+/**
+ * We do not need this here but it's an example for more complex tests,
+ * that need to do some setup before mounting the component.
+ */
+async function setUpRecipeSelector() {
+  TestBed.configureTestingModule({
+    providers: [],
   });
 
-  const getRecipeItems = () => within(container).getAllByRole('listitem');
-  const findRecipeItems = () => within(container).findAllByRole('listitem');
-
   return {
-    clickRecipeItemCheckboxAt: async (index: number) => {
-      const recipeEls = await findRecipeItems();
-      // TODO: or userEvent.click(recipeEls[index]) if the whole element is clickable.
-      await userEvent.click(
-        await within(recipeEls[index]).findByRole('checkbox'),
-      );
-    },
-    getRecipeItems,
-    getRecipeItemCheckboxes: () =>
-      within(container).getAllByRole<HTMLInputElement>('checkbox'),
     recipeSelectionStore: TestBed.inject(RecipeSelectionStore),
+    mount() {
+      const { nativeElement } = TestBed.createComponent(RecipeSelector, {
+        bindings: [
+          inputBinding('recipes', () => [
+            recipeMother.withBasicInfo('Burger').build(),
+            recipeMother.withBasicInfo('Salad').build(),
+            recipeMother.withBasicInfo('Pizza').build(),
+          ]),
+        ],
+      });
+
+      const getRecipeItems = () =>
+        within(nativeElement).getAllByRole('listitem');
+      const findRecipeItems = () =>
+        within(nativeElement).findAllByRole('listitem');
+
+      return {
+        clickRecipeItemCheckboxAt: async (index: number) => {
+          const recipeEls = await findRecipeItems();
+          // TODO: or userEvent.click(recipeEls[index]) if the whole element is clickable.
+          await userEvent.click(
+            await within(recipeEls[index]).findByRole('checkbox'),
+          );
+        },
+        getRecipeItems,
+        getRecipeItemCheckboxes: () =>
+          within(nativeElement).getAllByRole<HTMLInputElement>('checkbox'),
+      };
+    },
   };
 }
