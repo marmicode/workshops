@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import {
   MatListItem,
@@ -13,6 +13,7 @@ import {
 } from '@angular/material/sidenav';
 import { MatToolbar } from '@angular/material/toolbar';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { AuthState } from './auth/auth-state';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,8 +33,8 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   ],
   selector: 'wm-root',
   template: `
-    <mat-sidenav-container class="shell">
-      <mat-sidenav #drawer mode="side" opened>
+    <mat-sidenav-container>
+      <mat-sidenav #drawer mode="side" [opened]="isOnboarded()">
         <mat-nav-list>
           <a mat-list-item routerLink="/search" routerLinkActive="active">
             <mat-icon matListItemIcon>search</mat-icon>
@@ -59,9 +60,5 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   `,
 })
 export class App {
-  private readonly drawer = viewChild.required<MatSidenav>('drawer');
-
-  toggleDrawer(): void {
-    this.drawer().toggle();
-  }
+  protected isOnboarded = inject(AuthState).isOnboarded;
 }
