@@ -3,10 +3,12 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "autorevert": "scripts/autorevert.sh",
+    "limbo": "scripts/limbo.sh",
     "postinstall": "pnpm playwright install",
     "start": "nx serve",
-    "test": "nx test",
-    "test-wide": "nx test-wide"
+    "test": "nx test --browser.headless=false --watch",
+    "test-wide": "nx test-wide --watch"
   },
   "private": true,
   "dependencies": {
