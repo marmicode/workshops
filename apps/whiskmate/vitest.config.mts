@@ -1,0 +1,57 @@
+import { playwright } from '@vitest/browser-playwright';
+import { defineConfig } from 'vitest/config';
+import type { ProjectConfig } from 'vitest/node';
+import viteConfig from './vite.config.mjs';
+
+const browserTests = ['./**/*.browser.spec.ts'];
+const emulatedTests = ['./**/!(*.(browser|wide)).spec.ts'];
+const wideTests = ['./**/*.wide.spec.ts'];
+
+const emulatedSharedConfig: ProjectConfig = {
+  environment: 'jsdom',
+};
+
+const TIMEOUT = process.env.CI ? 1_000 : 200;
+
+export default defineConfig({
+  ...viteConfig,
+  test: {
+    watch: false,
+    setupFiles: ['./src/test-setup.ts'],
+    testTimeout: TIMEOUT,
+    expect: { poll: { interval: 0 } },
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: 'browser',
+          include: browserTests,
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: playwright({ actionTimeout: TIMEOUT }),
+            instances: [{ browser: 'chromium' }],
+          },
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'emulated',
+          include: emulatedTests,
+          ...emulatedSharedConfig,
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'wide',
+          include: wideTests,
+          retry: 3,
+          testTimeout: 1_000,
+          ...emulatedSharedConfig,
+        },
+      },
+    ],
+  },
+});

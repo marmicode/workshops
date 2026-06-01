@@ -69,6 +69,18 @@
         "staticFilePath": "dist/apps/whiskmate/browser",
         "spa": true
       }
+    },
+    "test": {
+      "options": {
+        "args": "--project=!wide"
+      }
+    },
+    "test-wide": {
+      "command": "vitest",
+      "options": {
+        "args": "--project=wide",
+        "cwd": "{projectRoot}"
+      }
     }
   }
 }
