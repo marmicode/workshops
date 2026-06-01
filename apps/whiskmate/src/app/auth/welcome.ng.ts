@@ -83,11 +83,7 @@ const REFERRAL_SOURCES = [
         </p>
       </header>
 
-      <form
-        class="welcome-form"
-        [formRoot]="welcomeForm"
-        (submit)="onSubmit($event)"
-      >
+      <form class="welcome-form" [formRoot]="welcomeForm">
         <fieldset>
           <legend>About you</legend>
           <div class="field-row">
