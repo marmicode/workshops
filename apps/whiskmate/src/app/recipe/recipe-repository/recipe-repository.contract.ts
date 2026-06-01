@@ -1,6 +1,6 @@
-import { expect, test } from "vitest";
-import { RecipeRepositoryDef } from './recipe-repository';
 import { lastValueFrom } from 'rxjs';
+import { expect, test } from 'vitest';
+import { RecipeRepositoryDef } from './recipe-repository';
 
 export function applyRecipeRepositoryContract(
   setUp: RepositoryContractSetUpFn,
