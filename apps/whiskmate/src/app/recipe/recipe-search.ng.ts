@@ -1,0 +1,59 @@
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { RecipeAddButton } from '../meal-plan/recipe-add-button.ng';
+import { Catalog } from '../shared/catalog.ng';
+import {
+  createDefaultRecipeFilterCriteria,
+  RecipeFilterCriteria,
+} from './recipe-filter-criteria';
+import { RecipeFilterForm } from './recipe-filter-form.ng';
+import { RecipePreview } from './recipe-preview.ng';
+import { RecipeRepository } from './recipe-repository/recipe-repository';
+
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'wm-recipe-search',
+  imports: [Catalog, RecipeAddButton, RecipeFilterForm, RecipePreview],
+  template: `
+    <wm-recipe-filter-form (filterChange)="filter.set($event)" />
+
+    @if (recipes.isLoading()) {
+      <img alt="Loading" src="https://marmicode.io/assets/loading.gif" />
+    } @else if (recipes.error()) {
+      <img alt="Sad Marmicode" src="https://marmicode.io/assets/error.gif" />
+      <p role="alert">Oups! Something went wrong.</p>
+    } @else if (recipes.value()?.length === 0) {
+      <img alt="Sad Marmicode" src="https://marmicode.io/assets/error.gif" />
+      <p role="alert">No recipes found.</p>
+    } @else {
+      <wm-catalog>
+        @for (recipe of recipes.value(); track recipe.id) {
+          <wm-recipe-preview [recipe]="recipe" data-testid="recipe-preview">
+            <wm-recipe-add-button [recipe]="recipe" />
+          </wm-recipe-preview>
+        }
+      </wm-catalog>
+    }
+  `,
+  styles: `
+    :host {
+      display: block;
+      padding-top: 1rem;
+      text-align: center;
+    }
+  `,
+})
+export class RecipeSearch {
+  filter = signal<RecipeFilterCriteria>(createDefaultRecipeFilterCriteria());
+  recipes = rxResource({
+    params: () => this.filter(),
+    stream: ({ params }) => this._recipeRepository.search(params),
+  });
+
+  private _recipeRepository = inject(RecipeRepository);
+}

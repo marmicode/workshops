@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, viewChild } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import {
   MatListItem,
@@ -13,11 +12,13 @@ import {
   MatSidenavContent,
 } from '@angular/material/sidenav';
 import { MatToolbar } from '@angular/material/toolbar';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    RouterLink,
+    RouterLinkActive,
     RouterOutlet,
     MatToolbar,
     MatSidenavContainer,
@@ -34,9 +35,13 @@ import { RouterOutlet } from '@angular/router';
     <mat-sidenav-container class="shell">
       <mat-sidenav #drawer mode="side" opened>
         <mat-nav-list>
-          <a mat-list-item href="#">
-            <mat-icon matListItemIcon>home</mat-icon>
-            <span matListItemTitle>Home</span>
+          <a mat-list-item routerLink="/search" routerLinkActive="active">
+            <mat-icon matListItemIcon>search</mat-icon>
+            <span matListItemTitle>Search</span>
+          </a>
+          <a mat-list-item routerLink="/meal-plan" routerLinkActive="active">
+            <mat-icon matListItemIcon>restaurant</mat-icon>
+            <span matListItemTitle>Meal Plan</span>
           </a>
         </mat-nav-list>
       </mat-sidenav>
