@@ -13,7 +13,7 @@ import type { Recipe } from './recipe';
   imports: [Card],
   template: `<wm-card [picture]="picture()">
     <h2 data-testid="recipe-name">{{ recipe().name }}</h2>
-    <ng-content />
+    <div class="actions"><ng-content /></div>
   </wm-card>`,
   styles: `
     h2 {
@@ -22,6 +22,12 @@ import type { Recipe } from './recipe';
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
     }
   `,
 })
