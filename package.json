@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "postinstall": "pnpm playwright install",
     "start": "nx serve",
     "test": "nx test"
   },
