@@ -51,7 +51,7 @@ interface OtpModel {
         >. Enter the 6-digit code to continue.
       </p>
 
-      <form class="auth-form" [formRoot]="otpForm" (submit)="onSubmit($event)">
+      <form class="auth-form" [formRoot]="otpForm">
         <mat-form-field>
           <mat-label>One-time code</mat-label>
           <input
@@ -69,15 +69,20 @@ interface OtpModel {
           }
         </mat-form-field>
 
-        @if (otpError()) {
-          <p class="otp-error" role="alert">{{ otpError() }}</p>
+        @if (
+          otpForm.code().errors().find(error => error.kind === 'invalid-otp');
+          as otpError
+        ) {
+          <p class="otp-error" role="alert">
+            {{ otpError.message }}
+          </p>
         }
 
         <button
           mat-raised-button
           color="primary"
           type="submit"
-          [disabled]="otpForm().invalid() || verifying()"
+          [disabled]="otpForm().invalid() || otpForm().submitting()"
         >
           Verify
         </button>
@@ -125,32 +130,31 @@ export class Otp {
   private readonly _router = inject(Router);
 
   otpModel = signal<OtpModel>({ code: '' });
-  otpError = signal<string | null>(null);
-  verifying = signal(false);
 
-  otpForm = form(this.otpModel, (path) => {
-    required(path.code, { message: 'Code is required' });
-    minLength(path.code, 6, { message: 'Enter all 6 digits' });
-    maxLength(path.code, 6, { message: 'Enter only 6 digits' });
-  });
+  otpForm = form(
+    this.otpModel,
+    (path) => {
+      required(path.code, { message: 'Code is required' });
+      minLength(path.code, 6, { message: 'Enter all 6 digits' });
+      maxLength(path.code, 6, { message: 'Enter only 6 digits' });
+    },
+    {
+      submission: {
+        action: async (path) => {
+          const valid = await otpMatchesHash(this.otpModel().code.trim());
+          if (!valid) {
+            return {
+              kind: 'invalid-otp',
+              fieldTree: path.code,
+              message: 'That code is incorrect. Try again.',
+            };
+          }
 
-  protected async onSubmit(event: Event): Promise<void> {
-    event.preventDefault();
-    if (this.otpForm().invalid()) {
-      return;
-    }
-    this.otpError.set(null);
-    this.verifying.set(true);
-    try {
-      const valid = await otpMatchesHash(this.otpModel().code.trim());
-      if (!valid) {
-        this.otpError.set('That code is incorrect. Try again.');
-        return;
-      }
-      this.auth.completeOtp();
-      await this._router.navigate(authPaths.welcomeRoute());
-    } finally {
-      this.verifying.set(false);
-    }
-  }
+          this.auth.completeOtp();
+          await this._router.navigate(authPaths.welcomeRoute());
+          return null;
+        },
+      },
+    },
+  );
 }
