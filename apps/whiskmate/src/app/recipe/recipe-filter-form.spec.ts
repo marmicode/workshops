@@ -6,7 +6,7 @@ import { RecipeFilterForm } from './recipe-filter-form.ng';
 import type { RecipeFilterCriteria } from './recipe-filter-criteria';
 
 describe(RecipeFilterForm.name, () => {
-  it.todo('submits keywords', () => {
+  it('submits keywords', () => {
     const filterChange = vi.fn<(criteria: RecipeFilterCriteria) => void>();
 
     const fixture = TestBed.createComponent(RecipeFilterForm);

@@ -1,14 +1,36 @@
 import { ChangeDetectionStrategy, Component, output } from '@angular/core';
-import type { RecipeFilterCriteria } from './recipe-filter-criteria';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  createDefaultRecipeFilterCriteria,
+  createRecipeFilterCriteria,
+  type RecipeFilterCriteria,
+} from './recipe-filter-criteria';
 
-/**
- * @deprecated 🚧 work in progress
- */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wm-recipe-filter-form',
-  template: `RecipeFilterForm - 🚧 work in progress`,
+  imports: [ReactiveFormsModule],
+  template: `<form [formGroup]="form">
+      <label>
+        Keywords
+        <input name="keywords" formControlName="keywords" />
+      </label>
+      <button type="submit" (click)="submit()">Search</button>
+    </form>`,
 })
 export class RecipeFilterForm {
   filterChange = output<RecipeFilterCriteria>();
+
+  protected form = new FormGroup({
+    keywords: new FormControl('', { nonNullable: true }),
+  });
+
+  protected submit() {
+    this.filterChange.emit(
+      createRecipeFilterCriteria({
+        ...createDefaultRecipeFilterCriteria(),
+        keywords: this.form.controls.keywords.value,
+      }),
+    );
+  }
 }
