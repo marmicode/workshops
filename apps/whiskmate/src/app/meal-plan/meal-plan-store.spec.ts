@@ -3,7 +3,8 @@ import { MealPlanStore } from './meal-plan-store';
 
 describe(MealPlanStore.name, () => {
   it.todo('adds recipe to slot', () => {
-    // Arrange empty store.
+    const store = new MealPlanStore();
+
     // Act `add({ slot: { day: 'tue', meal: 'dinner' }, recipe: burger })`.
     // Assert `plannedMeals()` contains burger at Tuesday dinner.
   });
