@@ -1,14 +1,10 @@
 import { Injectable } from '@angular/core';
-import { mealSlotsEqual, type MealSlot, type PlannedMeal } from './meal-plan';
-import type { Recipe } from '../recipe/recipe';
+import { type MealSlot, type PlannedMeal } from './meal-plan';
 
 @Injectable({ providedIn: 'root' })
 export class MealPlanStore {
   private _plannedMeals = new Set<PlannedMeal>();
 
-  /**
-   * @deprecated 🚧 Work in progress.
-   */
   add(plannedMeal: PlannedMeal): void {
     const slotTaken = [...this._plannedMeals].some(
       (existing) => existing.slot === plannedMeal.slot,
@@ -26,9 +22,6 @@ export class MealPlanStore {
     throw new Error(`🚧 work in progress`);
   }
 
-  /**
-   * @deprecated 🚧 work in progress
-   */
   plannedMeals(): PlannedMeal[] {
     return Array.from(this._plannedMeals);
   }
