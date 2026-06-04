@@ -1,4 +1,4 @@
-import { describe, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { MealPlanStore } from './meal-plan-store';
 import { TestBed } from '@angular/core/testing';
 
@@ -16,10 +16,15 @@ describe(MealPlanStore.name, () => {
         pictureUri: 'https://example.com/burger.jpg',
       },
     });
-    
 
-    // Act `add({ slot: { day: 'tue', meal: 'dinner' }, recipe: burger })`.
-    // Assert `plannedMeals()` contains burger at Tuesday dinner.
+    expect(store.plannedMeals()).toMatchObject([
+      {
+        slot: { day: 'tue', meal: 'dinner' },
+        recipe: {
+          name: 'Burger',
+        },
+      },
+    ]);
   });
 
   it.todo('rejects duplicate recipe in same slot', () => {
