@@ -1,5 +1,6 @@
 import { describe, it } from 'vitest';
 import { MealPlanStore } from './meal-plan-store';
+import { TestBed } from '@angular/core/testing';
 
 describe(MealPlanStore.name, () => {
   it.todo('adds recipe to slot', () => {
@@ -15,3 +16,9 @@ describe(MealPlanStore.name, () => {
     // Assert throws or returns error / does not duplicate entry.
   });
 });
+
+function setUpMealPlanStore() {
+  return {
+    mealPlanStore: TestBed.inject(MealPlanStore),
+  }
+}
