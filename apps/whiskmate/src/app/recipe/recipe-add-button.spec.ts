@@ -1,43 +1,40 @@
-import { describe, expect, it, vi } from 'vitest';
-
-const { MealPlanStore } = vi.hoisted(() => ({
-  MealPlanStore: class MealPlanStore {},
-}));
-
-vi.mock('../meal-plan/meal-plan-store', () => ({
-  MealPlanStore,
-}));
-
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatDialogHarness } from '@angular/material/dialog/testing';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { By } from '@angular/platform-browser';
+import { firstValueFrom } from 'rxjs';
+import { describe, expect, it, vi } from 'vitest';
+import { MealPlanStore } from '../meal-plan/meal-plan-store';
 import { MealSlotPickerDialog } from '../meal-plan/meal-slot-picker-dialog.ng';
-import {
-  createMealSlot,
-  formatDayOfWeek,
-  type MealSlot,
-} from '../meal-plan/meal-plan';
+import { createMealSlot, type MealSlot } from '../meal-plan/meal-plan';
+import type { Recipe } from './recipe';
 import { recipeMother } from './recipe.mother';
 import { RecipeAddButton } from './recipe-add-button.ng';
 
+@Component({
+  imports: [RecipeAddButton],
+  template: '<wm-recipe-add-button [recipe]="recipe" />',
+})
+class RecipeAddButtonHost {
+  recipe!: Recipe;
+}
+
 describe(RecipeAddButton.name, () => {
-  it.todo('adds recipe and shows snackbar', async () => {
+  it('adds recipe and shows snackbar', async () => {
     const burger = recipeMother.withBasicInfo('Burger').build();
     const tuesdayDinner = createMealSlot({ day: 'tue', meal: 'dinner' });
 
-    const { fixture, loader, mealPlanStore, snackBar } =
-      await setUpRecipeAddButton();
+    const { hostFixture, mealPlanStore, snackBar } =
+      await setUpRecipeAddButton(burger);
 
-    fixture.componentRef.setInput('recipe', burger);
-    fixture.detectChanges();
+    clickAdd(hostFixture);
+    hostFixture.detectChanges();
+    await hostFixture.whenStable();
 
-    clickButton(fixture.nativeElement, 'Add');
-    fixture.detectChanges();
-
-    await pickMealSlot(loader, fixture, tuesdayDinner);
+    await pickMealSlot(hostFixture, tuesdayDinner);
+    await hostFixture.whenStable();
 
     expect(mealPlanStore.add).toHaveBeenCalledOnce();
     expect(mealPlanStore.add).toHaveBeenCalledWith({
@@ -50,50 +47,51 @@ describe(RecipeAddButton.name, () => {
   });
 });
 
-async function setUpRecipeAddButton() {
-  const mealPlanStore = { add: vi.fn() };
-
+async function setUpRecipeAddButton(recipe: Recipe) {
   await TestBed.configureTestingModule({
     imports: [
+      RecipeAddButtonHost,
       RecipeAddButton,
       MealSlotPickerDialog,
       MatDialogModule,
       MatSnackBarModule,
     ],
-    providers: [{ provide: MealPlanStore, useValue: mealPlanStore }],
+    providers: [provideNoopAnimations()],
   }).compileComponents();
 
-  const fixture = TestBed.createComponent(RecipeAddButton);
-  const loader = TestbedHarnessEnvironment.documentRootLoader(fixture);
+  const mealPlanStore = TestBed.inject(MealPlanStore);
+  vi.spyOn(mealPlanStore, 'add');
   const snackBar = TestBed.inject(MatSnackBar);
   vi.spyOn(snackBar, 'open');
 
-  return { fixture, loader, mealPlanStore, snackBar };
+  const hostFixture = TestBed.createComponent(RecipeAddButtonHost);
+  hostFixture.componentInstance.recipe = recipe;
+  hostFixture.detectChanges();
+  await hostFixture.whenStable();
+
+  return { hostFixture, mealPlanStore, snackBar };
+}
+
+function clickAdd(hostFixture: ComponentFixture<RecipeAddButtonHost>) {
+  const addButton = hostFixture.debugElement.query(By.css('button'));
+  addButton.triggerEventHandler('click');
 }
 
 async function pickMealSlot(
-  loader: HarnessLoader,
-  fixture: ComponentFixture<RecipeAddButton>,
+  hostFixture: ComponentFixture<RecipeAddButtonHost>,
   slot: MealSlot,
 ) {
-  await loader.getHarness(MatDialogHarness);
+  await hostFixture.whenStable();
 
-  const overlay = document.querySelector('.cdk-overlay-container');
-  if (!overlay) {
-    throw new Error('Dialog overlay not found');
+  const dialogRef = TestBed.inject(MatDialog).openDialogs.at(-1);
+  if (!dialogRef) {
+    throw new Error('Meal slot picker dialog not open');
   }
-  clickButton(overlay, formatDayOfWeek(slot.day));
-  clickButton(overlay, slot.meal);
-  clickButton(overlay, 'Confirm');
-  fixture.detectChanges();
-}
-
-function clickButton(root: ParentNode, label: string) {
-  const button = Array.from(root.querySelectorAll('button')).find(
-    (candidate) => candidate.textContent?.trim() === label,
-  );
-  if (!button) {
-    throw new Error(`Button "${label}" not found`);
-  }
-  button.click();
+  const picker = dialogRef.componentInstance as MealSlotPickerDialog;
+  picker.selectDay(slot.day);
+  picker.selectMeal(slot.meal);
+  const closed = firstValueFrom(dialogRef.afterClosed());
+  picker.confirm();
+  await closed;
+  hostFixture.detectChanges();
 }
