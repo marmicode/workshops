@@ -7,7 +7,7 @@ export class MealPlanStore {
   /**
    * @deprecated 🚧 work in progress
    */
-  add(_args: { slot: MealSlot; recipe: Recipe }): void {
+  add(slot: MealSlot, recipe: Recipe): void {
     throw new Error(`🚧 work in progress`);
   }
 
