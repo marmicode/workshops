@@ -5,55 +5,42 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { rxResource, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { of, switchMap } from 'rxjs';
 import { Catalog } from '../shared/catalog.ng';
-import type { RecipeFilterCriteria } from './recipe-filter-criteria';
+import {
+  createDefaultRecipeFilterCriteria,
+  type RecipeFilterCriteria,
+} from './recipe-filter-criteria';
 import { RecipeFilterForm } from './recipe-filter-form.ng';
 import { RecipeRepository } from './recipe-repository/recipe-repository';
+import { RecipePreview } from './recipe-preview.ng';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wm-recipe-search',
-  imports: [RecipeFilterForm, Catalog],
+  imports: [RecipeFilterForm, Catalog, RecipePreview],
   template: `
     <wm-recipe-filter-form (filterChange)="onFilterChange($event)" />
 
-    @if (searchState() === 'idle') {
-      <p data-testid="search-prompt">Search for recipes to get started.</p>
-    }
-
     <wm-catalog>
-      @if (searchState() === 'empty') {
+      @for (recipe of recipes.value(); track recipe.id) {
+        <wm-recipe-preview [recipe]="recipe" />
+      } @empty {
         <p data-testid="empty-state">No recipes found</p>
-      }
-      @if (searchState() === 'results') {
-        @for (recipe of recipes(); track recipe.id) {
-          <h2 data-testid="recipe-name">{{ recipe.name }}</h2>
-        }
       }
     </wm-catalog>
   `,
 })
 export class RecipeSearch {
+  private _criteria = signal<RecipeFilterCriteria>(
+    createDefaultRecipeFilterCriteria(),
+  );
   private _repository = inject(RecipeRepository);
 
-  private _criteria = signal<RecipeFilterCriteria | undefined>(undefined);
-
-  protected recipes = toSignal(
-    toObservable(this._criteria).pipe(
-      switchMap((criteria) =>
-        criteria ? this._repository.search(criteria) : of([]),
-      ),
-    ),
-    { initialValue: [] },
-  );
-
-  protected searchState = computed<'idle' | 'results' | 'empty'>(() => {
-    if (this._criteria() === undefined) {
-      return 'idle';
-    }
-    return this.recipes().length > 0 ? 'results' : 'empty';
+  protected recipes = rxResource({
+    params: this._criteria,
+    stream: ({ params }) => this._repository.search(params),
   });
 
   onFilterChange(criteria: RecipeFilterCriteria) {

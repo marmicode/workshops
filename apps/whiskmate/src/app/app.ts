@@ -4,8 +4,8 @@ import {
   inject,
   viewChild,
 } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import {
   MatListItem,
   MatListItemIcon,
@@ -37,6 +37,7 @@ import { FeatureToggles } from './feature-toggles';
     MatListItem,
     MatListItemIcon,
     MatListItemTitle,
+    MatSlideToggle,
   ],
   selector: 'wm-root',
   template: `
@@ -61,8 +62,15 @@ import { FeatureToggles } from './feature-toggles';
       </mat-sidenav>
 
       <mat-sidenav-content>
-        <mat-toolbar>
+        <mat-toolbar class="toolbar">
           <span>Whiskmate</span>
+          <mat-slide-toggle
+            [checked]="featureToggles.canSearchRecipes()"
+            (change)="featureToggles.setRecipeSearchEnabled($event.checked)"
+            aria-label="Recipe search"
+          >
+            Experimental Mode
+          </mat-slide-toggle>
         </mat-toolbar>
 
         <main class="content">
@@ -70,6 +78,13 @@ import { FeatureToggles } from './feature-toggles';
         </main>
       </mat-sidenav-content>
     </mat-sidenav-container>
+  `,
+  styles: `
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
   `,
 })
 export class App {

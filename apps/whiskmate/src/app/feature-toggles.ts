@@ -1,17 +1,17 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class FeatureToggles {
-  private _toggles = new Map<string, boolean>();
-
-  constructor() {
-    this._toggles.set(
-      'recipe-search',
-      localStorage.getItem('recipe-search') === 'true',
-    );
-  }
+  private readonly recipeSearch = signal(
+    localStorage.getItem('recipe-search') === 'true',
+  );
 
   canSearchRecipes(): boolean {
-    return this._toggles.get('recipe-search') ?? false;
-}
+    return this.recipeSearch();
+  }
+
+  setRecipeSearchEnabled(enabled: boolean): void {
+    this.recipeSearch.set(enabled);
+    localStorage.setItem('recipe-search', String(enabled));
+  }
 }
