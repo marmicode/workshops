@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  viewChild,
+} from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import {
@@ -13,13 +18,15 @@ import {
   MatSidenavContent,
 } from '@angular/material/sidenav';
 import { MatToolbar } from '@angular/material/toolbar';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { recipeSearchRoute } from './recipe/recipe.paths';
+import { FeatureToggles } from './feature-toggles';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterLink,
+    RouterLinkActive,
     RouterOutlet,
     MatToolbar,
     MatSidenavContainer,
@@ -40,10 +47,16 @@ import { recipeSearchRoute } from './recipe/recipe.paths';
             <mat-icon matListItemIcon>home</mat-icon>
             <span matListItemTitle>Home</span>
           </a>
-          <a mat-list-item [routerLink]="recipeSearchRoute">
-            <mat-icon matListItemIcon>restaurant</mat-icon>
-            <span matListItemTitle>Recipes</span>
-          </a>
+          @if (featureToggles.canSearchRecipes()) {
+            <a
+              mat-list-item
+              [routerLink]="recipeSearchRoute"
+              routerLinkActive="active"
+            >
+              <mat-icon matListItemIcon>restaurant</mat-icon>
+              <span matListItemTitle>Recipes</span>
+            </a>
+          }
         </mat-nav-list>
       </mat-sidenav>
 
@@ -63,6 +76,7 @@ export class App {
   protected readonly recipeSearchRoute = recipeSearchRoute;
 
   private readonly drawer = viewChild.required<MatSidenav>('drawer');
+  protected readonly featureToggles = inject(FeatureToggles);
 
   toggleDrawer(): void {
     this.drawer().toggle();
