@@ -5,13 +5,13 @@ import { recipeMother } from '../recipe/recipe.mother';
 
 describe(MealPlanStore.name, () => {
   it('adds recipe to slot', () => {
-    const store = new MealPlanStore();
-    store.add({
+    const { mealPlanStore } = setUpMealPlanStore();
+    mealPlanStore.add({
       slot: { day: 'tue', meal: 'dinner' },
       recipe: recipeMother.withBasicInfo('Burger').build(),
     });
 
-    expect(store.plannedMeals()).toMatchObject([
+    expect(mealPlanStore.plannedMeals()).toMatchObject([
       {
         slot: { day: 'tue', meal: 'dinner' },
         recipe: {
