@@ -24,6 +24,6 @@ export class MealPlanStore {
    * @deprecated 🚧 work in progress
    */
   plannedMeals(): PlannedMeal[] {
-    return [];
+    return Array.from(this._plannedMeals);
   }
 }

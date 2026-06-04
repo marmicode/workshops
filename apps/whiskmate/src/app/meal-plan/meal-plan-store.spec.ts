@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { recipeMother } from '../recipe/recipe.mother';
 
 describe(MealPlanStore.name, () => {
-  it.todo('adds recipe to slot', () => {
+  it('adds recipe to slot', () => {
     const store = new MealPlanStore();
     store.add({
       slot: { day: 'tue', meal: 'dinner' },
