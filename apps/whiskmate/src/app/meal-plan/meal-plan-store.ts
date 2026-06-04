@@ -4,11 +4,13 @@ import type { Recipe } from '../recipe/recipe';
 
 @Injectable({ providedIn: 'root' })
 export class MealPlanStore {
+  private _plannedMeals = new Set<PlannedMeal>();
+
   /**
-   * @deprecated 🚧 work in progress
+   * @deprecated 🚧 Work in progress.
    */
-  add(_args: { slot: MealSlot; recipe: Recipe }): void {
-    throw new Error(`🚧 work in progress`);
+  add(plannedMeal: PlannedMeal): void {
+    this._plannedMeals.add(plannedMeal);
   }
 
   /**
@@ -22,6 +24,6 @@ export class MealPlanStore {
    * @deprecated 🚧 work in progress
    */
   plannedMeals(): PlannedMeal[] {
-    throw new Error(`🚧 work in progress`);
+    return [];
   }
 }
