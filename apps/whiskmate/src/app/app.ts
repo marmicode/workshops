@@ -13,11 +13,13 @@ import {
   MatSidenavContent,
 } from '@angular/material/sidenav';
 import { MatToolbar } from '@angular/material/toolbar';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { recipeSearchRoute } from './recipe/recipe.paths';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    RouterLink,
     RouterOutlet,
     MatToolbar,
     MatSidenavContainer,
@@ -38,6 +40,10 @@ import { RouterOutlet } from '@angular/router';
             <mat-icon matListItemIcon>home</mat-icon>
             <span matListItemTitle>Home</span>
           </a>
+          <a mat-list-item [routerLink]="recipeSearchRoute">
+            <mat-icon matListItemIcon>restaurant</mat-icon>
+            <span matListItemTitle>Recipes</span>
+          </a>
         </mat-nav-list>
       </mat-sidenav>
 
@@ -54,6 +60,8 @@ import { RouterOutlet } from '@angular/router';
   `,
 })
 export class App {
+  protected readonly recipeSearchRoute = recipeSearchRoute;
+
   private readonly drawer = viewChild.required<MatSidenav>('drawer');
 
   toggleDrawer(): void {
