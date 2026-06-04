@@ -10,8 +10,8 @@ export class MealPlanStore {
    * @deprecated 🚧 Work in progress.
    */
   add(plannedMeal: PlannedMeal): void {
-    const slotTaken = [...this._plannedMeals].some((existing) =>
-      mealSlotsEqual(existing.slot, plannedMeal.slot),
+    const slotTaken = [...this._plannedMeals].some(
+      (existing) => existing.slot === plannedMeal.slot,
     );
     if (slotTaken) {
       return;
