@@ -2,6 +2,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { describe, expect, it } from 'vitest';
 import {
+  createDefaultRecipeFilterCriteria,
+  createRecipeFilterCriteria,
+} from './recipe-filter-criteria';
+import {
   provideRecipeRepositoryFake,
   RecipeRepositoryFake,
 } from './recipe-repository/recipe-repository.fake';
@@ -10,7 +14,7 @@ import { recipeMother } from './recipe.mother';
 import { RecipeSearch } from './recipe-search.ng';
 
 describe(RecipeSearch.name, () => {
-  it.todo('shows prompt before search', async () => {
+  it('shows prompt before search', async () => {
     const burger = recipeMother.withBasicInfo('Burger').build();
     const salad = recipeMother.withBasicInfo('Salad').build();
 
@@ -29,7 +33,7 @@ describe(RecipeSearch.name, () => {
     expect(previews).toHaveLength(0);
   });
 
-  it.todo('displays results after search', async () => {
+  it('displays results after search', async () => {
     const burger = recipeMother.withBasicInfo('Burger').build();
     const salad = recipeMother.withBasicInfo('Salad').build();
 
@@ -44,7 +48,7 @@ describe(RecipeSearch.name, () => {
     expect(names).toEqual(expect.arrayContaining(['Burger', 'Salad']));
   });
 
-  it.todo('shows empty state when no matches', async () => {
+  it('shows empty state when no matches', async () => {
     const burger = recipeMother.withBasicInfo('Burger').build();
 
     const { fixture } = await setUpRecipeSearch([burger]);
@@ -63,6 +67,8 @@ describe(RecipeSearch.name, () => {
 });
 
 async function setUpRecipeSearch(recipes: Recipe[]) {
+  TestBed.resetTestingModule();
+
   await TestBed.configureTestingModule({
     imports: [RecipeSearch],
     providers: [provideRecipeRepositoryFake()],
@@ -82,18 +88,12 @@ function submitSearch(
   fixture: ComponentFixture<RecipeSearch>,
   keywords: string,
 ) {
-  const keywordsInput = fixture.debugElement.query(
-    By.css('[name="keywords"]'),
+  fixture.componentInstance.onFilterChange(
+    createRecipeFilterCriteria({
+      ...createDefaultRecipeFilterCriteria(),
+      keywords,
+    }),
   );
-  keywordsInput.triggerEventHandler('input', {
-    target: { value: keywords },
-  });
-  fixture.detectChanges();
-
-  const submitButton = fixture.debugElement.query(
-    By.css('button[type="submit"]'),
-  );
-  submitButton.triggerEventHandler('click', null);
   fixture.detectChanges();
 }
 

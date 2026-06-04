@@ -3,7 +3,7 @@ import {
   Injectable,
   makeEnvironmentProviders,
 } from '@angular/core';
-import { defer, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Recipe } from '../recipe';
 import { RecipeFilterCriteria } from '../recipe-filter-criteria';
 import { RecipeRepository, RecipeRepositoryDef } from './recipe-repository';
@@ -21,31 +21,29 @@ export class RecipeRepositoryFake implements RecipeRepositoryDef {
     maxIngredientCount,
     maxStepCount,
   }: Partial<RecipeFilterCriteria> = {}): Observable<Recipe[]> {
-    return defer(() => {
-      const recipes = this._recipes.filter((recipe) => {
-        const conditions = [
-          /* Filter by keywords. */
-          () =>
-            keywords
-              ? recipe.name
-                  .toLocaleLowerCase()
-                  .includes(keywords.toLocaleLowerCase())
-              : true,
-          /* Filter by max ingredients. */
-          () =>
-            maxIngredientCount != null
-              ? recipe.ingredients.length <= maxIngredientCount
-              : true,
-          /* Filter by max steps. */
-          () =>
-            maxStepCount != null ? recipe.steps.length <= maxStepCount : true,
-        ];
+    const recipes = this._recipes.filter((recipe) => {
+      const conditions = [
+        /* Filter by keywords. */
+        () =>
+          keywords
+            ? recipe.name
+                .toLocaleLowerCase()
+                .includes(keywords.toLocaleLowerCase())
+            : true,
+        /* Filter by max ingredients. */
+        () =>
+          maxIngredientCount != null
+            ? recipe.ingredients.length <= maxIngredientCount
+            : true,
+        /* Filter by max steps. */
+        () =>
+          maxStepCount != null ? recipe.steps.length <= maxStepCount : true,
+      ];
 
-        /* Return true if all conditions are true. */
-        return conditions.every((condition) => condition());
-      });
-      return of(recipes);
+      /* Return true if all conditions are true. */
+      return conditions.every((condition) => condition());
     });
+    return of(recipes);
   }
 }
 
