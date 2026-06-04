@@ -11,12 +11,12 @@ import {
   selector: 'wm-recipe-filter-form',
   imports: [ReactiveFormsModule],
   template: `<form [formGroup]="form">
-      <label>
-        Keywords
-        <input name="keywords" formControlName="keywords" />
-      </label>
-      <button type="submit" (click)="submit()">Search</button>
-    </form>`,
+    <label>
+      Keywords
+      <input name="keywords" formControlName="keywords" />
+    </label>
+    <button type="submit" (click)="submit()">Search</button>
+  </form>`,
 })
 export class RecipeFilterForm {
   filterChange = output<RecipeFilterCriteria>();

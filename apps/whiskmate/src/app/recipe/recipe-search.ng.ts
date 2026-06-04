@@ -1,20 +1,18 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   inject,
   signal,
 } from '@angular/core';
-import { rxResource, toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { of, switchMap } from 'rxjs';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { Catalog } from '../shared/catalog.ng';
 import {
   createDefaultRecipeFilterCriteria,
   type RecipeFilterCriteria,
 } from './recipe-filter-criteria';
 import { RecipeFilterForm } from './recipe-filter-form.ng';
-import { RecipeRepository } from './recipe-repository/recipe-repository';
 import { RecipePreview } from './recipe-preview.ng';
+import { RecipeRepository } from './recipe-repository/recipe-repository';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
