@@ -16,17 +16,17 @@
 
 _Assumptions where not specified — correct any of these before we lock the doc._
 
-- User opens **Recipe Search** from a **sidenav link** (e.g. “Recipes”) and lands on `/recipes/search`.
-- **Initial state:** empty catalog with a short prompt to search (no default recipe list).
-- User enters **keywords** in a search field and **submits** (button or Enter).
-- While loading: show a loading indicator; on success: show a **grid of `wm-recipe-preview` cards** inside `wm-catalog`.
-- Each preview card shows the recipe name and picture; an **Add** action sits in the preview’s action slot.
-- User clicks **Add** → **dialog** to pick **day of week** (Mon–Sun) and **meal** (breakfast / lunch / dinner).
-- User confirms → recipe is stored in **`MealPlanStore`** for that slot; a **snackbar** confirms (e.g. “Added to Tuesday dinner”).
-- **Duplicate** same recipe in the **same slot** → prevented; show an error snackbar or inline message; dialog stays open or closes per Material defaults.
-- **No results** → empty state: “No recipes found” (keep search term visible).
-- **Search/API error** → error message; user can retry.
-- **Out of scope on this page:** viewing or editing the full weekly plan (separate route/page later).
+- [ ] User opens **Recipe Search** from a **sidenav link** (e.g. “Recipes”) and lands on `/recipes/search`.
+- [ ] **Initial state:** empty catalog with a short prompt to search (no default recipe list).
+- [ ] User enters **keywords** in a search field and **submits** (button or Enter).
+- [ ] While loading: show a loading indicator; on success: show a **grid of `wm-recipe-preview` cards** inside `wm-catalog`.
+- [ ] Each preview card shows the recipe name and picture; an **Add** action sits in the preview’s action slot.
+- [ ] User clicks **Add** → **dialog** to pick **day of week** (Mon–Sun) and **meal** (breakfast / lunch / dinner).
+- [ ] User confirms → recipe is stored in **`MealPlanStore`** for that slot; a **snackbar** confirms (e.g. “Added to Tuesday dinner”).
+- [ ] **Duplicate** same recipe in the **same slot** → prevented; show an error snackbar or inline message; dialog stays open or closes per Material defaults.
+- [ ] **No results** → empty state: “No recipes found” (keep search term visible).
+- [ ] **Search/API error** → error message; user can retry.
+- [ ] **Out of scope on this page:** viewing or editing the full weekly plan (separate route/page later).
 
 # Design
 
@@ -90,13 +90,13 @@ flowchart TD
 
 ## `MealPlanStore`
 
-### Adds recipe to slot:
+### [ ] Adds recipe to slot:
 
 - Arrange empty store.
 - Act `add({ slot: { day: 'tue', meal: 'dinner' }, recipe: burger })`.
 - Assert `plannedMeals()` contains burger at Tuesday dinner.
 
-### Rejects duplicate recipe in same slot:
+### [ ] Rejects duplicate recipe in same slot:
 
 - Arrange store with burger at Tuesday dinner.
 - Act `add` same slot and recipe.
@@ -104,7 +104,7 @@ flowchart TD
 
 ## `RecipeFilterForm`
 
-### Submits keywords:
+### [ ] Submits keywords:
 
 - Arrange mounted form.
 - Act type `"salad"` and submit.
@@ -112,19 +112,19 @@ flowchart TD
 
 ## `RecipeSearch`
 
-### Shows prompt before search:
+### [ ] Shows prompt before search:
 
 - Arrange with fake repository.
 - Mount `RecipeSearch`.
 - Assert prompt visible; catalog empty.
 
-### Displays results after search:
+### [ ] Displays results after search:
 
 - Arrange fake repository with Burger and Salad.
 - Mount, submit keywords `""` or trigger load per implementation.
 - Assert two `wm-recipe-preview` cards with names.
 
-### Shows empty state when no matches:
+### [ ] Shows empty state when no matches:
 
 - Arrange fake repository returning `[]` for `keywords: 'xyz'`.
 - Act search `xyz`.
@@ -132,7 +132,7 @@ flowchart TD
 
 ## `RecipeAddButton` + `MealSlotPickerDialog`
 
-### Adds recipe and shows snackbar:
+### [ ] Adds recipe and shows snackbar:
 
 - Arrange fake store and dialog harness.
 - Mount button with burger recipe; click Add; select Tue + dinner; confirm.
@@ -140,7 +140,7 @@ flowchart TD
 
 ## Browser (optional slice)
 
-### Happy path add to meal plan:
+### [ ] Happy path add to meal plan:
 
 - Arrange app with fake recipes.
 - Visit `/recipes/search`, search, click Add on Burger, pick slot, confirm.
@@ -150,7 +150,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  PR0["PR0: add MealSlot and other core models"]
+  PR0["PR0: ✅ add MealSlot and other core models"]
   PR1["PR1: MealPlanStore"]
   PR2["PR2: RecipeAddButton"]
   PR3["PR3: RecipeFilterForm"]
