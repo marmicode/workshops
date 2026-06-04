@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import type { MealSlot, PlannedMeal } from './meal-plan';
+import { mealSlotsEqual, type MealSlot, type PlannedMeal } from './meal-plan';
 import type { Recipe } from '../recipe/recipe';
 
 @Injectable({ providedIn: 'root' })
@@ -10,6 +10,12 @@ export class MealPlanStore {
    * @deprecated 🚧 Work in progress.
    */
   add(plannedMeal: PlannedMeal): void {
+    const slotTaken = [...this._plannedMeals].some((existing) =>
+      mealSlotsEqual(existing.slot, plannedMeal.slot),
+    );
+    if (slotTaken) {
+      return;
+    }
     this._plannedMeals.add(plannedMeal);
   }
 

@@ -21,7 +21,7 @@ describe(MealPlanStore.name, () => {
     ]);
   });
 
-  it.todo('rejects duplicate recipe in same slot', () => {
+  it('rejects duplicate recipe in same slot', () => {
     const { mealPlanStore } = setUpMealPlanStore();
     const burger = recipeMother.withBasicInfo('Burger').build();
     const salad = recipeMother.withBasicInfo('Salad').build();
